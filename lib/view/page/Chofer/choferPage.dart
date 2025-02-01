@@ -1,5 +1,3 @@
-import 'package:muniapp/controller/navegcioncontroller.dart';
-
 import '../../../config/library/import.dart';
 
 class Choferpage extends StatefulWidget {
@@ -58,7 +56,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: Style.estiloAppbar(
         leadingbool: false, 
-        title: Style.textTitulo(mensaje: "MuniApp", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true),
+        title: Style.textTitulo(mensaje: "MUNI", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true),
         actions: [
           Obx((){
             if (tubicacion.latidude.value == 0 && tubicacion.longitude.value == 0){
@@ -130,6 +128,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
             padding: EdgeInsets.all(5),
             child:  Style.textSubTitulo(mensaje: "Para iniciar la navegacion, primero selecciona una ruta, despues en 'Iniciar Ruta'", maxlines: 3),
           ),
+          
           FutureBuilder(
             future: Chofercontroller().listarrutas(), 
             builder: (context, snapshot) {
@@ -218,6 +217,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
                                 if(res){
                                   uservidor.mensajesubTituloServidor2.value = "iniciando ruta...";
                                   await Chofercontroller().iniciarRuta(idruta: int.parse(urutas.idRutaSeleccionadaValue.value));
+                                  await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(urutas.idRutaSeleccionadaValue.value), tiponotificacion: "inicio");
                                   
                                   //Obtengo las Coordenas Final del Detlle ruta.
                                   final mapRuta = urutas.listarutas.firstWhere((e) => e["id_ruta"] == int.parse(urutas.idRutaSeleccionadaValue.value), orElse: () => {});

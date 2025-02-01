@@ -1,10 +1,11 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:muniapp/controller/navegcioncontroller.dart';
 import 'config/library/import.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+  await Firebase.initializeApp();
 
   await GetStorage.init();
   iniciarControladoresGetx();
@@ -56,6 +57,7 @@ void iniciarControladoresGetx() {
   Get.put(Uciudadano());
   Get.put(Uadmin());
 
+  Get.put(Notificacioncontroller());
   Get.put(Personalcontroller());
   Get.put(Recolectorcontroler());
   Get.put(Themecontroller());
@@ -68,5 +70,5 @@ void iniciarControladoresGetx() {
   Get.put(Recolectormodel());
   Get.put(Ubicacionmodel());
   Get.put(Usuariomodel());
-  Get.put(Personalmodel());
+  Get.put(Personalmodel());  
 }

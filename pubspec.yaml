@@ -25,6 +25,9 @@ dependencies:
   dropdown_button2: ^2.3.9
   mapbox_maps_flutter: ^2.5.1 # para el mapa
   url_launcher: ^6.3.1
+  firebase_core: ^3.10.1
+  firebase_messaging: ^15.2.1
+  flutter_local_notifications: ^18.0.1
   # flutter_mapbox_navigation:
   #   git:
   #     url: https://github.com/codewithdarkwa/flutter_mapbox_navigation

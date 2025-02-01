@@ -21,7 +21,7 @@ class _AdminpageState extends State<Adminpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: Style.estiloAppbar(leadingbool: false, title: Style.textTitulo(mensaje: "MuniApp", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true)),
+      appBar: Style.estiloAppbar(leadingbool: false, title: Style.textTitulo(mensaje: "MUNI", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true)),
       body: Adminwidget().bodyAdmin(),
     );
   }

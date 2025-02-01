@@ -14,27 +14,38 @@ class Uciudadano extends GetxController {
 
 
   TextEditingController txtNombre = TextEditingController();
-  TextEditingController txtApellido = TextEditingController();
+  TextEditingController txtApellidoPat = TextEditingController();
+  TextEditingController txtApellidoMat = TextEditingController();
   TextEditingController txtcorreo = TextEditingController();
   TextEditingController txtCelular = TextEditingController();
   TextEditingController txtusuario = TextEditingController();
   TextEditingController txtClave = TextEditingController();
+  TextEditingController txtClave2 = TextEditingController();
+  TextEditingController txtSexo = TextEditingController();
 
-  RxBool boolEnabletxtNombre= true.obs;
-  RxBool boolpintartxtApellido = false.obs;
+  RxBool boolEnabletxtNombre = true.obs;
+  RxBool boolpintartxtApellidoPat = false.obs;
+  RxBool boolpintartxtApellidoMat = false.obs;
   RxBool boolpintartxtNombre = false.obs;
   RxBool boolpintartxtcorreo = false.obs;
   RxBool boolpintartxtCelular = false.obs;
   RxBool boolpintartxtusuario = false.obs;
   RxBool boolpintartxtClave = false.obs;
+  RxBool boolpintartxtClave2 = false.obs;
+  RxBool boolpintartxtSexo = false.obs;
 
   late FocusNode focotxtxtNombre;
-  late FocusNode focotxtApellido;
+  late FocusNode focotxtApellidoPat;
+  late FocusNode focotxtApellidoMat;
   late FocusNode focotxtcorreo;
   late FocusNode focotxtCelular;
   late FocusNode focotxtusuario;
   late FocusNode focotxtClave;
+  late FocusNode focotxtClave2;
+  late FocusNode focotxtSexo;
 
+  RxBool verClave = false.obs;
+  RxBool verClave2 = false.obs;
   RxBool cargarRegistroCiudadano = false.obs;
   RxString mapaEstiloCiudadano = MapboxStyles.MAPBOX_STREETS.obs;
 

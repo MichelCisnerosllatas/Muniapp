@@ -288,6 +288,8 @@ class Navegcioncontroller extends GetxController{
       }
       
       final m =await Rutamodel().guardaInicioRuta(datosJson: para);
+      await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(para["idruta"].toString()), tiponotificacion: "finalizacion");
+
       urutas.idinicioruta.value = 0;
       Navigator.pop(Get.context!);
       Global().mensajeShowToast(mensaje: m["message"], colorFondo: Colors.blueAccent);

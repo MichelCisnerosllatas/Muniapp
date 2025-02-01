@@ -16,4 +16,5 @@ class UUsuario extends GetxController {
   late FocusNode focotxtclave;
 
   RxBool cargarLogin = false.obs;
+  RxBool verclave = false.obs;
 }

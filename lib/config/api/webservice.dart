@@ -1,3 +1,4 @@
 class Webservice {
-  String api() => "https://muni.grupobufeo.com/api/";
+  String api() => "https://perumodernoloreto.pe/intra/public/api/";
+  // String api() => "https://muni.grupobufeo.com/api/";
 }

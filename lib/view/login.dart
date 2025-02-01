@@ -50,7 +50,7 @@ class _LoginhState extends State<Login> {
                     const SizedBox(height: 20),
                     // Título
                     Style.textTitulo(
-                      mensaje: "MuniApp",
+                      mensaje: "MUNI",
                       colorTexto: Colors.white,
                       fontSize: 24,
                     ),
@@ -70,9 +70,14 @@ class _LoginhState extends State<Login> {
                       controller: tusuario.txtclave,
                       rxboolText: tusuario.boolpintartextclave,
                       focusNode: tusuario.focotxtclave,
-                      obscureText: true,
+                      obscureText: tusuario.verclave,
                       validator: (p0) => p0.isEmpty ? 'Ingrese una contraseña' : null,
+                      suffixIcon: Rx<Widget>(IconButton(
+                        icon: Obx(() => Icon(tusuario.verclave.value ? Icons.visibility : Icons.visibility_off)),
+                        onPressed: () => tusuario.verclave.value = !tusuario.verclave.value
+                      ))
                     ),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

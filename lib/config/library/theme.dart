@@ -107,6 +107,11 @@ class TemasPerzonalizado {
       ),
       type: BottomNavigationBarType.shifting, // Fijo, sin animaciones
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.white, // Color del cursor
+      selectionColor: const Color.fromARGB(255, 156, 125, 249),
+      selectionHandleColor: const Color.fromARGB(255, 244, 243, 243)
+    ),
     listTileTheme: ListTileThemeData(
       tileColor: Style.colorNegro,
       iconColor: Style.colorCelesteClaro1,

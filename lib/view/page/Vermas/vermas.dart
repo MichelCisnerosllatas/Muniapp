@@ -12,7 +12,7 @@ class _VermasState extends State<Vermas> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: Style.estiloAppbar(leadingbool: false, title: Style.textTitulo(mensaje: "MuniAPP", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true)),
+      appBar: Style.estiloAppbar(leadingbool: false, title: Style.textTitulo(mensaje: "MUNI", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -23,7 +23,7 @@ class _VermasState extends State<Vermas> {
             ),
 
             const SizedBox(height: 20),
-            Style.textTitulo(mensaje: "MuniApp", fontSize: 24),
+            Style.textTitulo(mensaje: "MUNI", fontSize: 24),
 
             ListTile(
               leading: Style.estiloIcon(icon: Icons.person, size: 25),
@@ -40,7 +40,7 @@ class _VermasState extends State<Vermas> {
             ),
             ListTile(
               leading: Style.estiloIcon(icon: Icons.login_sharp, size: 25),
-              title: Style.textTitulo(mensaje: "Cerrar Sesion", negitra: true),
+              title: Style.textTitulo(mensaje: "Cerrar sesión", negitra: true),
               trailing: Style.estiloIcon(icon: Icons.arrow_forward_ios, size: 20),
               onTap: () {
                 GetStorage().remove("loginData");

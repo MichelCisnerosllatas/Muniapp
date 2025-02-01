@@ -1,5 +1,3 @@
-import 'package:muniapp/controller/navegcioncontroller.dart';
-
 import '../../../config/library/import.dart';
 
 class Navegacionpage extends StatefulWidget {
@@ -110,7 +108,8 @@ class _NavegacionpageState extends State<Navegacionpage> {
                     onPressedOK: () async {
                       Navigator.pop(context);                      
                       if (argumentos != null) {
-                        await navegacionController.detenerSeguimientoNavegacion(para: argumentos);                        
+                        await navegacionController.detenerSeguimientoNavegacion(para: argumentos);
+                        // await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(argumentos["idruta"].toString()), tiponotificacion: "finalizacion");                        
                       } else {
                         print("Los argumentos están nulos");
                       }

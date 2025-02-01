@@ -38,7 +38,7 @@ class _Registrociudadano2pageState extends State<Registrociudadano2page> {
                 color: Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(10)
               ),
-              child: Style.textTitulo(mensaje: "Hola, ${uciudadano.txtNombre.text} ${uciudadano.txtApellido.text}", fontSize: 18),
+              child: Style.textTitulo(mensaje: "Hola, ${uciudadano.txtNombre.text} ${uciudadano.txtApellidoPat.text}", fontSize: 18),
             ),
           ),
 

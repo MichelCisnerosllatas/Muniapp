@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "706281029534",
+    "project_id": "muni-5a869",
+    "storage_bucket": "muni-5a869.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706281029534:android:abf00d55419424246d208f",
+        "android_client_info": {
+          "package_name": "com.example.muniapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoE0MZBnl8RztKSOrpDqfiOXQDsNtkFIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

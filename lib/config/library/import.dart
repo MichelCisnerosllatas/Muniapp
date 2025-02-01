@@ -11,6 +11,9 @@ export 'dart:convert';
 export 'dart:async';
 export 'package:flutter/services.dart';
 export 'package:dropdown_button2/dropdown_button2.dart';
+export 'package:firebase_messaging/firebase_messaging.dart';
+export 'package:firebase_core/firebase_core.dart';
+export 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //clases
 export '../../config/api/webservice.dart';
@@ -27,6 +30,7 @@ export '../../models/personalModel.dart';
 export '../../models/rutaModel.dart';
 export '../../models/ciudadanoModel.dart';
 export '../../models/adminModel.dart';
+export '../../models/notifacionModel.dart';
 
 //controladores
 export '../../controller/personalcontroller.dart';
@@ -36,7 +40,9 @@ export '../../controller/themecontroller.dart';
 export '../../controller/usuariocontroller.dart';
 export '../../controller/ciudadanocontroller.dart';
 export '../../controller/chofercontroller.dart';
+export '../../controller/navegcioncontroller.dart';
 export '../../controller/admincontroller.dart';
+export '../../controller/notificacioncontroller.dart';
 
 //Utils
 export '../utils/upersonal.dart';

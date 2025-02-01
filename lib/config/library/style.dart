@@ -102,14 +102,31 @@ class Style {
     );
   }
 
-  static Obx texFormField({required TextEditingController controller, String? labelText, String? hintext, Color? colorhintext, RxBool? enable, FocusNode? focusNode,     
-    bool? readOnly, double? fontsize, TextInputType? keyboard, Function(String)? validator, Color? colorBorderSide,
-    Widget? prefixIcon, Widget? suffixIcon, String? errorText, String? initialValue,
-    RxBool? rxboolText, bool? obscureText, String? obscuringCharacter,  
-    int? maxLength, int? multilinea, Function(String)? onChanged}) {
-
+  static Obx texFormField({
+    required TextEditingController controller, 
+    String? labelText, 
+    String? hintext, 
+    Color? colorhintext, 
+    RxBool? enable, 
+    FocusNode? focusNode,     
+    bool? readOnly, 
+    double? fontsize, 
+    TextInputType? keyboard, 
+    Function(String)? validator, 
+    Color? colorBorderSide,
+    Widget? prefixIcon, 
+    Rx<Widget>? suffixIcon, // ⬅️ Cambiado para que sea reactivo
+    String? errorText, 
+    String? initialValue,
+    RxBool? rxboolText, 
+    RxBool? obscureText, // ⬅️ Ahora obscureText es RxBool
+    String? obscuringCharacter,  
+    int? maxLength, 
+    int? multilinea, 
+    Function(String)? onChanged
+  }) {
     return Obx(() {
-      final validObscuringCharacter = (obscuringCharacter != null && obscuringCharacter.length == 1) ? obscuringCharacter  : '•';
+      final validObscuringCharacter = (obscuringCharacter != null && obscuringCharacter.length == 1) ? obscuringCharacter : '•';
       return TextFormField(
         enabled: enable == null ? true : enable.value,
         focusNode: focusNode ?? FocusNode(),
@@ -117,50 +134,80 @@ class Style {
         readOnly: readOnly ?? false, 
         initialValue: initialValue,     
         style: TextStyle(
-          color: rxboolText!.value ? colorRojo : colorNegro,
+          color: rxboolText!.value ? Theme.of(Get.context!).colorScheme.error : Theme.of(Get.context!).colorScheme.onBackground,
           fontSize: fontsize ?? 14,
         ),
         keyboardType: keyboard,
-        validator: validator != null ? (value) => validator(value ?? '') : null,        
+        validator: validator != null ? (value) => validator(value ?? '') : null, 
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
           prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          label: Text(labelText ?? '', style: TextStyle(color: rxboolText.value ? colorRojo : colorNegro, fontSize: fontsize ?? 14)),
+          suffixIcon: suffixIcon?.value,
+          label: Text(labelText ?? '', style: TextStyle(color: rxboolText.value ? Theme.of(Get.context!).colorScheme.error : Theme.of(Get.context!).colorScheme.onBackground, fontSize: fontsize ?? 14)),
           hintText: hintext,
-          hintStyle: TextStyle(color: hintext != null ? colorhintext ?? colorNegro : colorNegro, fontSize: fontsize ?? 16),
+          hintStyle: TextStyle(color: hintext != null ? colorhintext ?? Theme.of(Get.context!).colorScheme.onBackground : Theme.of(Get.context!).colorScheme.onBackground, fontSize: fontsize ?? 16),
           border: OutlineInputBorder(
-            borderSide: BorderSide( color: rxboolText.value ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+            borderSide: BorderSide( color: rxboolText.value ? Theme.of(Get.context!).colorScheme.error : (colorBorderSide ?? Theme.of(Get.context!).colorScheme.primaryContainer), width: 2.0),
             borderRadius: BorderRadius.circular(10),
           ),
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+            borderSide: BorderSide(color: rxboolText.value == true ? Theme.of(Get.context!).colorScheme.error : (colorBorderSide ?? Theme.of(Get.context!).colorScheme.primaryContainer), width: 2.0),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+            borderSide: BorderSide(color: rxboolText.value == true ? Theme.of(Get.context!).colorScheme.error : (colorBorderSide ?? Theme.of(Get.context!).colorScheme.primaryContainer), width: 2.0),
             borderRadius: BorderRadius.circular(10),
           ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: colorRojo),
+            borderSide: BorderSide(color: Theme.of(Get.context!).colorScheme.error),
             borderRadius: BorderRadius.circular(10),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: colorRojo),
+            borderSide: BorderSide(color: Theme.of(Get.context!).colorScheme.error),
             borderRadius: BorderRadius.circular(10),
           ),
           errorText: errorText, // Ajustado para mostrar el texto de error
-        ),
+        ),       
+        // decoration: InputDecoration(
+        //   contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+        //   prefixIcon: prefixIcon,
+        //   suffixIcon: suffixIcon?.value, // ⬅️ Ahora el suffixIcon es reactivo
+        //   label: Text(labelText ?? '', style: TextStyle(color: rxboolText.value ? colorRojo : colorNegro, fontSize: fontsize ?? 14)),
+        //   hintText: hintext,
+        //   hintStyle: TextStyle(color: hintext != null ? colorhintext ?? colorNegro : colorNegro, fontSize: fontsize ?? 16),
+        //   border: OutlineInputBorder(
+        //     borderSide: BorderSide( color: rxboolText.value ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   enabledBorder: OutlineInputBorder(
+        //     borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   focusedBorder: OutlineInputBorder(
+        //     borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   errorBorder: OutlineInputBorder(
+        //     borderSide: BorderSide(color: colorRojo),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   focusedErrorBorder: OutlineInputBorder(
+        //     borderSide: BorderSide(color: colorRojo),
+        //     borderRadius: BorderRadius.circular(10),
+        //   ),
+        //   errorText: errorText, 
+        // ),        
         maxLines: multilinea ?? 1,
         keyboardAppearance: Brightness.dark,
         maxLength: maxLength,
-        obscureText: obscureText ?? false,
-        obscuringCharacter: validObscuringCharacter, // Usa el carácter ajustado
+        obscureText: obscureText?.value ?? false, // ⬅️ Ahora obscureText es reactivo
+        obscuringCharacter: validObscuringCharacter,
         onChanged: onChanged ?? (value) {},
         inputFormatters: null,
       );
     });
   }
+
 
   static Text textTitulo({required String mensaje, TextAlign? textAlign, Color? colorTexto, double? fontSize, int? maxlines, TextOverflow? textOverflow, bool? negitra, String? fontFamily, Color? background}) {
     return Text(

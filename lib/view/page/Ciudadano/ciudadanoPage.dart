@@ -25,7 +25,7 @@ class _CiudadanopageState extends State<Ciudadanopage> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: Style.estiloAppbar(
         leadingbool: false, 
-        title: Style.textTitulo(mensaje: "MuniApp", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true),
+        title: Style.textTitulo(mensaje: "MUNI", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true),
         // actions: [
         //   Obx((){
         //     if (tubicacion.latidude.value == 0 && tubicacion.longitude.value == 0){

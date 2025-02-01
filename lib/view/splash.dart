@@ -49,7 +49,7 @@ class _SplashState extends State<Splash> {
                 ),
 
                 const SizedBox(height: 20),
-                Style.textTitulo(mensaje: "MuniApp", colorTexto: Colors.white, fontSize: 24),
+                Style.textTitulo(mensaje: "MUNI", colorTexto: Colors.white, fontSize: 24),
               ],
             ),
             

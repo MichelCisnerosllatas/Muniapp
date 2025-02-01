@@ -5,6 +5,7 @@ class Ciudadanocontroller extends GetxController {
   final Uciudadano uciudadano = Get.find<Uciudadano>();
   final UServidor uservidor = Get.find<UServidor>();
   final UUsuario uusuario = Get.find();
+  final Notificacioncontroller notificacioncontroller = Get.find();
   mapbox.PointAnnotationManager? annotationManager;
 
   Future<void> mostrarRutasInicioCiudadano() async {
@@ -24,11 +25,14 @@ class Ciudadanocontroller extends GetxController {
 
   void initStateRegistroCiudadano(){
     uciudadano.focotxtxtNombre = FocusNode();
-    uciudadano.focotxtApellido = FocusNode();
+    uciudadano.focotxtApellidoPat = FocusNode();
+    uciudadano.focotxtApellidoMat = FocusNode();
     uciudadano.focotxtcorreo = FocusNode();
     uciudadano.focotxtusuario = FocusNode();
     uciudadano.focotxtClave = FocusNode();
+    uciudadano.focotxtClave2 = FocusNode();
     uciudadano.focotxtCelular = FocusNode();
+    uciudadano.focotxtSexo = FocusNode();
   }
 
   Future<List<List<double>>> detalleRutaCamionCiudadano({required int idruta, int? pantallaOrigen = 2}) async {
@@ -300,11 +304,12 @@ class Ciudadanocontroller extends GetxController {
         Global().modalCircularProgress(context: Get.context!, mensaje: uservidor.mensajeTituloServidor);
         var m = await Ciudadanomodel().registrarCiudadano(datosJson: {
           "nombre" : uciudadano.txtNombre.text.trim(),
-          "apellido" : uciudadano.txtApellido.text.trim(),
+          "apellido" : "${uciudadano.txtApellidoPat.text.trim()} ${uciudadano.txtApellidoMat.text.trim()}",
           "correo" : uciudadano.txtcorreo.text.trim(),
           "celular" : uciudadano.txtCelular.text.trim(),
           "usuario" : uciudadano.txtusuario.text.trim(),
-          "clave" : uciudadano.txtClave.text.trim()
+          "clave" : uciudadano.txtClave.text.trim(),
+          "tokendispositivo" : notificacioncontroller.deviceToken.value
         });
         
         if(!m["success"] || !m.containsKey("data")){
@@ -561,7 +566,7 @@ class Ciudadanocontroller extends GetxController {
 
   void limpiarregistroCiudadano(){
     uciudadano.txtNombre.clear();
-    uciudadano.txtApellido.clear();
+    uciudadano.txtApellidoPat.clear();
     // uciudadano.txtClave.clear();
     uciudadano.txtcorreo.clear();
     uciudadano.listaGuardadasderutasCiudadanoDropdowsbutton.clear();

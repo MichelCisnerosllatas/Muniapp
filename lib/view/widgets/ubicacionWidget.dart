@@ -1,6 +1,5 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../config/library/import.dart';
-import '../../controller/navegcioncontroller.dart';
 
 class Ubicacionwidget {
   final tubicacion = Get.find<Tubicacion>();

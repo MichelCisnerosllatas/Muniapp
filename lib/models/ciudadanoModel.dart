@@ -56,7 +56,8 @@ class Ciudadanomodel extends GetxController {
             if(datosJson.containsKey("correo")) "email" : datosJson["correo"].toString(),
             if(datosJson.containsKey("celular")) "users_phone" : datosJson["celular"].toString(),
             if(datosJson.containsKey("usuario")) "username" : datosJson["usuario"].toString(),
-            if(datosJson.containsKey("clave")) "password" : datosJson["clave"].toString()
+            if(datosJson.containsKey("clave")) "password" : datosJson["clave"].toString(),
+            if(datosJson.containsKey("tokendispositivo")) "fcm_token" : datosJson["tokendispositivo"].toString()
           },
           encoding: Encoding.getByName("utf-8"),
         );
