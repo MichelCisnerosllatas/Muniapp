@@ -137,11 +137,12 @@ class Adminwidget {
         uadmin.refreshControllerAdmin.value.loadNoData();
       },
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 5, top: 10),
-            child: Style.textTitulo(mensaje: Global().obtenerSaludo()),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 5, top: 10),
+          //   child: Style.textTitulo(mensaje: Global().obtenerSaludo()),
+          // ),
           
           Style.estiloCard(
             elevation: 5,
@@ -179,6 +180,8 @@ class Adminwidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Style.textTitulo(mensaje: Global().obtenerSaludo()),
+                        const SizedBox(height: 10),
                         Style.textTitulo(mensaje: "Hola, ${uusuario.usuariologin['name'] ?? ""}"),
                         Style.textSubTitulo(mensaje: "su rol es Administrador"),
                       ],

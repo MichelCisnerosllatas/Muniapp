@@ -98,8 +98,7 @@ class _NavegacionpageState extends State<Navegacionpage> {
               left: 20.0,
               right: 20.0,
               child: ElevatedButton(
-                onPressed: () {                
-
+                onPressed: () {
                   Global().modalShowModalBottomSheetPregunta(
                     context: context, 
                     titulo: "Finalizar Navegación", 

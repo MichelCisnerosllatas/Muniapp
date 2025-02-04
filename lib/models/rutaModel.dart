@@ -4,6 +4,36 @@ import 'package:http/http.dart' as http;
 class Rutamodel extends GetConnect{
   final uservidor = Get.find<UServidor>();
   final uusuario = Get.find<UUsuario>();
+  
+  Future<List<Map<String, dynamic>>> mostrarHistorialRutasChofer({Map<String, dynamic>? parametros}) async{
+    try {
+      await Future.microtask((){});      
+      uservidor.respuestaservidor = await Future.delayed(const Duration(seconds: 0, milliseconds: 0), () {
+        return http.post(
+          Uri.parse("${Webservice().api()}historial_ruta_chofer_api"),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: {
+            "id_users" : uusuario.usuariologin["id_users"].toString()
+          },
+          encoding: Encoding.getByName("utf-8"),
+        );
+      }).timeout(const Duration(seconds: 120));
+
+      uservidor.validar.value = await uservidor.validarRespuestaServidor(response: uservidor.respuestaservidor);
+      if (uservidor.validar.value) {
+        uservidor.jsondecode.value = jsonDecode(uservidor.respuestaservidor.body);
+        if (!uservidor.jsondecode.value.containsKey('rutas')) {
+          uservidor.mensajesubTituloServidor.value = "El servidor devolvió una respuesta vacía.";
+        }
+      }
+    } catch (ex) {
+      uservidor.servidorExpecion(ex);
+    }
+    return List<Map<String, dynamic>>.from(uservidor.jsondecode.value['rutas'] ?? []);
+  }
 
   Future<List<Map<String, dynamic>>> mostrarRutasChofer({Map<String, dynamic>? parametros}) async{
     try {
@@ -102,6 +132,7 @@ class Rutamodel extends GetConnect{
           if(datosJson.containsKey("idinicioruta")) "id_inicio_ruta" : datosJson["idinicioruta"].toString(),
           if(datosJson.containsKey("iduser")) "id_users" : datosJson["iduser"].toString(),
           if(datosJson.containsKey("idruta")) "id_ruta" : datosJson["idruta"].toString(),
+          if(datosJson.containsKey("observacion")) "inicio_ruta_observacion" : datosJson["observacion"].toString(),
           "inicio_ruta_fecha_fin" : DateTime.now().toString()
         };
       }else{

@@ -9,6 +9,7 @@ class Navegcioncontroller extends GetxController{
   final unavegacion = Get.find<Unavegacion>();
   final tubicacion = Get.find<Tubicacion>();
   final Urutas urutas = Get.find<Urutas>();
+  final Uchofer uchofer = Get.find<Uchofer>();
 
   Future<void> abrirGoogleMapsConCoordenadas({double? latInicio, double? lonInicio, double? latDestino, double? lonDestino}) async {
     bool googleMapsInstalado = await verificarGoogleMapsInstalado();
@@ -67,6 +68,7 @@ class Navegcioncontroller extends GetxController{
                 children: <Widget>[
                   Expanded(
                     child: ElevatedButton.icon(
+                      icon: Image.asset('assets/img/googleMapsImage.png', width: 30, height: 30, fit: BoxFit.cover ),
                       onPressed: btnGoogleMaps, 
                       label: Style.textTitulo(mensaje: "Google Maps"),
                     )
@@ -75,7 +77,8 @@ class Navegcioncontroller extends GetxController{
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: btnMuniappMaps, 
-                      label: Style.textTitulo(mensaje: "MuniApp Maps"),
+                      icon: Image.asset('assets/img/logo.png', width: 30, height: 30, fit: BoxFit.cover ),
+                      label: Style.textTitulo(mensaje: "Muni Maps"),
                     )
                   ),
                 ],
@@ -291,6 +294,7 @@ class Navegcioncontroller extends GetxController{
       await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(para["idruta"].toString()), tiponotificacion: "finalizacion");
 
       urutas.idinicioruta.value = 0;
+      uchofer.saberNaveMapEligida.value = 0;
       Navigator.pop(Get.context!);
       Global().mensajeShowToast(mensaje: m["message"], colorFondo: Colors.blueAccent);
     }
@@ -302,8 +306,12 @@ class Navegcioncontroller extends GetxController{
   void iniciarSeguimientoNavegacion() {
     positionStream = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 1,
+        // LocationAccuracy.bestForNavigation ////Para apps de navegación en tiempo real, sigue la orientación del usuario, pero consume más batería que todas las opciones.
+        // LocationAccuracy.best ////Similar a high, pero con más intentos de precisión. Consume más batería.
+        // LocationAccuracy.medium // Para obtener ubicaciones razonablemente precisas sin consumir demasiada batería.
+        // LocationAccuracy.low ////Cuando solo necesitas una ubicación aproximada, como en apps de clima.
+        accuracy: LocationAccuracy.high, //Utiliza GPS en exteriores, Proporciona ubicaciones más precisas (alrededor de 5 a 10 metros de margen de error).
+        distanceFilter: 1, //Obtiene nuevas coordenadas cada vez que el usuario se mueve al menos 1 metro
       ),
     ).listen((Position position) async {
       tubicacion.latidude.value = position.latitude;
@@ -316,15 +324,16 @@ class Navegcioncontroller extends GetxController{
         "coordenaday" : tubicacion.latidude.value.toString(),
       });
 
-      Global().mensajeShowToast(mensaje: m["message"]);
+      double bearing = position.heading;  // Obtener el rumbo del usuario en grados
+      Global().mensajeShowToast(mensaje: "${m["message"]} latidude: ${tubicacion.latidude.value}, longitude: ${tubicacion.longitude.value}" );
 
       // Ajustar la cámara a la nueva ubicación
       unavegacion.mapboxMappNavegacion?.setCamera(
         mapbox.CameraOptions(
           center: mapbox.Point(coordinates: mapbox.Position(position.longitude, position.latitude)),
           zoom: 16.0,
-          bearing: 180.0,  // Dirección del usuario
-          pitch:45.0,  // Vista 3D más inclinada
+          bearing: bearing,  // Dirección del usuario
+          pitch: 50.0,  // Vista 3D más inclinada
         ),
       );
     });

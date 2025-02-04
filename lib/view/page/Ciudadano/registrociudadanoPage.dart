@@ -13,7 +13,6 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
     'Masculino',
     'Femenino',
   ];
-  String? selectedValue;
 
   @override
   void initState() {
@@ -36,6 +35,16 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
+              TextButton(
+                onPressed: (){}, 
+                child: Column(children: [
+                  Style.estiloIcon(icon: Icons.camera_alt, size: 100),
+                  Style.textTitulo(mensaje: "Foto"),
+                ],)
+              ),
+
+              
               const SizedBox(height: 20),
               Style.texFormField(
                 labelText: "Nombre Completo",
@@ -71,8 +80,6 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
                   ),
                 ],
               ),
-              
-              
 
               const SizedBox(height: 20),
               Style.texFormField(
@@ -95,68 +102,68 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
                       focusNode: uciudadano.focotxtCelular,
                       keyboard: TextInputType.phone,
                       validator: (p0) => p0.isEmpty ? 'Parametro Requerido' : null,
+                      maxLength: 9
                     ),
                   ),
 
-                  const SizedBox(width: 10), // Espaciado entre los elementos
+                  const SizedBox(width: 10),
                   Expanded(
                     child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: Row(
-                          children: [
-                            Icon(
-                              Icons.list,
-                              size: 16,
-                              color: Colors.yellow,
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Expanded(
-                              child: Style.textSubTitulo(mensaje: "Sexo"),
-                            ),
-                          ],
-                        ),
-                        items: items.map((String item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Style.textSubTitulo(mensaje: item)
-                        )).toList(),
-                        value: selectedValue,
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: ButtonStyleData(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Theme.of(context).appBarTheme.backgroundColor!,
-                            ),
-                            color: Theme.of(context).colorScheme.background,
+                      child: Obx(() => DropdownButton2<String>(
+                          isExpanded: true,
+                          hint: Row(
+                            children: [
+                              Icon(
+                                Icons.list,
+                                size: 16,
+                                color: Colors.yellow,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Expanded(
+                                child: Style.textSubTitulo(mensaje: "Sexo"),
+                              ),
+                            ],
                           ),
-                          elevation: 2,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Theme.of(context).appBarTheme.backgroundColor!,
+                          items: items.map((String item) => DropdownMenuItem<String>(
+                            value: item,
+                            child: Style.textSubTitulo(mensaje: item)
+                          )).toList(),
+                          value: uciudadano.txtSexo.value == "" ? null : uciudadano.txtSexo.value,
+                          onChanged: (String? value) {
+                            uciudadano.txtSexo.value = value!;
+                          },
+                          buttonStyleData: ButtonStyleData(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Theme.of(context).appBarTheme.backgroundColor!,
+                              ),
+                              color: Theme.of(context).colorScheme.background,
                             ),
-                            color: Theme.of(context).colorScheme.background,
+                            elevation: 2,
                           ),
-                          scrollbarTheme: ScrollbarThemeData(
-                            radius: const Radius.circular(40),
-                            thickness: MaterialStateProperty.all<double>(6),
-                            thumbVisibility: MaterialStateProperty.all<bool>(true),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Theme.of(context).appBarTheme.backgroundColor!,
+                              ),
+                              color: Theme.of(context).colorScheme.background,
+                            ),
+                            scrollbarTheme: ScrollbarThemeData(
+                              radius: const Radius.circular(40),
+                              thickness: MaterialStateProperty.all<double>(6),
+                              thumbVisibility: MaterialStateProperty.all<bool>(true),
+                            ),
                           ),
-                        ),
-                        menuItemStyleData: MenuItemStyleData(
-                          height: 50, // Ajusta la altura de cada ítem
-                          padding: EdgeInsets.symmetric(horizontal: 10), // Ajusta el padding interno
+                          menuItemStyleData: MenuItemStyleData(
+                            height: 50, // Ajusta la altura de cada ítem
+                            padding: EdgeInsets.symmetric(horizontal: 10), // Ajusta el padding interno
+                          ),
                         ),
                       ),
                     ),
@@ -212,7 +219,7 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
                 onPressed: (){
                   FocusManager.instance.primaryFocus?.unfocus();
                   if(uciudadano.formKeyRegistroCiudadano.currentState!.validate()){
-                    Get.toNamed("registrociudadanopage2");
+                    Get.toNamed("/registrociudadanopage2");
                     // Ciudadanocontroller().registroCiudadano();
                   }
                 }

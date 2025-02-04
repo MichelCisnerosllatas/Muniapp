@@ -13,7 +13,7 @@ class Style {
     return Icon(
       icon, 
       size: size, 
-      color: color
+      color: color ?? Theme.of(Get.context!).colorScheme.onBackground
     );
   } 
 

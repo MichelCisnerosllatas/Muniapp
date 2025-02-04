@@ -6,4 +6,6 @@ class Unavegacion extends GetxController {
 
   RxDouble rutafinalXCamion = 0.0.obs;
   RxDouble rutafinalYCamion = 0.0.obs;
+
+
 }

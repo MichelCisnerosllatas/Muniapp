@@ -52,11 +52,14 @@ class Ciudadanomodel extends GetxController {
           },
           body: {
             if(datosJson.containsKey("nombre")) "name" : datosJson["nombre"].toString(),
-            if(datosJson.containsKey("apellido")) "last_name" : datosJson["apellido"].toString(),            
+            if(datosJson.containsKey("apellido")) "last_name" : datosJson["apellido"].toString(),    
+            if(datosJson.containsKey("apellido2")) "maternal_surname" : datosJson["apellido2"].toString(),         
             if(datosJson.containsKey("correo")) "email" : datosJson["correo"].toString(),
             if(datosJson.containsKey("celular")) "users_phone" : datosJson["celular"].toString(),
             if(datosJson.containsKey("usuario")) "username" : datosJson["usuario"].toString(),
             if(datosJson.containsKey("clave")) "password" : datosJson["clave"].toString(),
+            if(datosJson.containsKey("sexo")) "user_sexo" : (datosJson["sexo"].toString() == "Masculino" ? "M" : "F"),
+            if(datosJson.containsKey("foto")) "profile_picture" : datosJson["foto"].toString(),
             if(datosJson.containsKey("tokendispositivo")) "fcm_token" : datosJson["tokendispositivo"].toString()
           },
           encoding: Encoding.getByName("utf-8"),

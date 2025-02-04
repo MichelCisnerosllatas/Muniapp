@@ -1,9 +1,22 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
-
+import 'package:intl/intl.dart';
 import '../../config/library/import.dart';
 
 class Global {
+
+  String formatearFecha(String fecha) {
+    try {
+      DateFormat formatoEntrada = DateFormat("yyyy-MM-dd HH:mm:ss"); // Formato de entrada
+      DateTime fechaDateTime = formatoEntrada.parse(fecha);
+
+      // Formato de salida: dd/MM/yyyy HH:mm
+      return DateFormat("dd/MM/yyyy HH:mm").format(fechaDateTime);
+    } catch (e) {
+      return "Fecha inválida $e";
+    }
+  }
+
 
   String obtenerSaludo() {
     DateTime now = DateTime.now();
@@ -11,12 +24,14 @@ class Global {
 
     if (hora >= 6 && hora < 12) {
       return "¡Buenos días! 🌅";
+      
     } else if (hora >= 12 && hora < 18) {
       return "¡Buenas tardes! ☀️";
     } else {
       return "¡Buenas noches! 🌙";
     }
   }
+
 
   bool validarJson(String source) {
     try {

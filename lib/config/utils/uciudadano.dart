@@ -21,7 +21,7 @@ class Uciudadano extends GetxController {
   TextEditingController txtusuario = TextEditingController();
   TextEditingController txtClave = TextEditingController();
   TextEditingController txtClave2 = TextEditingController();
-  TextEditingController txtSexo = TextEditingController();
+  RxString txtSexo = RxString('');
 
   RxBool boolEnabletxtNombre = true.obs;
   RxBool boolpintartxtApellidoPat = false.obs;

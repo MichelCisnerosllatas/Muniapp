@@ -55,6 +55,7 @@ export '../../config/utils/urutas.dart';
 export '../../config/utils/unavegacion.dart';
 export '../../config/utils/uciudadano.dart';
 export '../../config/utils/uadmin.dart';
+export '../../config/utils/uchofer.dart';
 
 //Widgets
 export '../../view/widgets/personalWidjet.dart';

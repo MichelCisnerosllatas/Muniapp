@@ -277,99 +277,12 @@ class _Registrociudadano2pageState extends State<Registrociudadano2page> {
                 return Ciudadanowidget().mostrarMapaCiudadanoRegistro();
               }
             }),
-          )
-      
-          
-          // FutureBuilder(
-          //   future: Ciudadanocontroller().listarrutasCiudadano(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.connectionState == ConnectionState.waiting) {
-          //       return Center(child: LoadingAnimationWidget.hexagonDots(color: Theme.of(context).colorScheme.onPrimary, size: 25));
-          //     } else if (snapshot.hasError) {
-          //       return Text('Error al obtener la lista de rutas: ${snapshot.error}');
-          //     } else {
-          //       return Container(
-          //         padding: EdgeInsets.all(5),
-          //         child: DropdownButtonHideUnderline(
-          //           child: Obx(() => DropdownButton2<String>(
-          //             isExpanded: true,
-          //             hint: Style.textTitulo(mensaje: "Selecciona la RUta", colorTexto: Theme.of(context).colorScheme.onBackground),
-          //             items: uciudadano.listarutasCiudadanoDropdowsbutton.map((ruta) => DropdownMenuItem<String>(
-          //               value: ruta['id_ruta'].toString(),
-          //               child: Style.textTitulo(mensaje: ruta['ruta_nombre'])
-          //             )).toSet().toList(),
-          //             value: uciudadano.idRutaCiudadanoSeleccionadaValue.value == '' ? null : uciudadano.idRutaCiudadanoSeleccionadaValue.value,
-          //             onChanged: (value) async{
-          //               uciudadano.idRutaCiudadanoSeleccionadaValue.value = value!;
-          //               uciudadano.cargarMapaLocalizarCiudadano.value = true;
-
-          //               // Limpia el estado anterior
-          //               await ciudadanocontroller.limpiarAnotaciones();
-
-          //               // Cargar los detalles de la nueva ruta
-          //               await ciudadanocontroller.detalleRutaCamionCiudadano(idruta: int.parse(value));
-          //               if (!uciudadano.mapaCaragadaCiudadano.value) {
-          //                 uciudadano.mapaCaragadaCiudadano.value = true;
-          //               }
-
-          //               // Agregar la nueva ruta al mapa
-          //               await ciudadanocontroller.agregarRutaAlMapaCiudadano();
-          //               await ciudadanocontroller.agregarIconosInicioFinCiudadano();
-          //               await ciudadanocontroller.centrarMapaEnRutaCiudadano();
-
-          //               uciudadano.cargarMapaLocalizarCiudadano.value = false;
-          //               print("Nueva ruta cargada: $value");
-          //             },
-          //             buttonStyleData: ButtonStyleData(
-          //               height: 50,
-          //               padding: const EdgeInsets.only(left: 14, right: 14),
-          //               decoration: BoxDecoration(
-          //                 borderRadius: BorderRadius.circular(14),
-          //                 border: Border.all(
-          //                   color: Theme.of(context).colorScheme.onBackground,
-          //                 ),
-          //                 color: Theme.of(context).colorScheme.background,
-          //               ),
-          //               elevation: 2,
-          //             ),
-          //             iconStyleData: IconStyleData(
-          //               iconSize: 30,
-          //               iconEnabledColor: Theme.of(context).colorScheme.onBackground,
-          //               iconDisabledColor: Colors.grey,
-          //             ),
-          //             dropdownStyleData: DropdownStyleData(
-          //               maxHeight: 200,
-          //               padding: EdgeInsets.only(left: 14, right: 14),
-          //               decoration: BoxDecoration(
-          //                 borderRadius: BorderRadius.circular(14),
-          //                 border: Border.all(
-          //                   color: Theme.of(context).appBarTheme.backgroundColor!,
-          //                 ),
-          //                 color: Theme.of(context).colorScheme.background,
-          //               ),
-          //               // offset: const Offset(-20, 0),
-          //               scrollbarTheme: ScrollbarThemeData(
-          //                 radius: const Radius.circular(40),
-          //                 thickness: MaterialStateProperty.all<double>(6),
-          //                 thumbVisibility: MaterialStateProperty.all<bool>(true),
-          //               ),
-          //             ),
-          //             menuItemStyleData: const MenuItemStyleData(
-          //               height: 40,
-          //               padding: EdgeInsets.only(left: 14, right: 14),
-          //             ),
-          //           ))
-          //         ),
-          //       );
-          //     }
-          //   }
-          // ),
-          
+          )          
         ],
       ),
       floatingActionButton: FloatingActionButton(
         mini: false,
-        backgroundColor: Colors.white.withOpacity(0.5),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         child: Icon(Icons.add_location, color: Theme.of(context).colorScheme.onBackground, size: 40),
         onPressed: () => ciudadanocontroller.registrarCiudadanoyCoordenadasCasa()     	
       ),

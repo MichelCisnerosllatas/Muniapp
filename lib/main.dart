@@ -56,6 +56,7 @@ void iniciarControladoresGetx() {
   Get.put(Unavegacion());
   Get.put(Uciudadano());
   Get.put(Uadmin());
+  Get.put(Uchofer());
 
   Get.put(Notificacioncontroller());
   Get.put(Personalcontroller());

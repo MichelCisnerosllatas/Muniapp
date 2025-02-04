@@ -288,7 +288,6 @@ class Ciudadanocontroller extends GetxController {
   }
 
   void registrarCiudadanoyCoordenadasCasa() {  
-
     if(uciudadano.coordenadaCasaGuardadaMap.isEmpty){
       Global().modalErrorShowDialog(context: Get.context!, mensaje: "No se han agregado coordenadas de casa.");
       return;
@@ -296,7 +295,7 @@ class Ciudadanocontroller extends GetxController {
 
     Global().modalShowModalBottomSheetPregunta(
       context: Get.context!, 
-      titulo: "estas seguro?", 
+      titulo: "¿Estás seguro?", 
       mensaje: "verifica tus coordenadas antes de registrar",
       onPressedOK: () async{
         Navigator.pop(Get.context!);
@@ -304,19 +303,27 @@ class Ciudadanocontroller extends GetxController {
         Global().modalCircularProgress(context: Get.context!, mensaje: uservidor.mensajeTituloServidor);
         var m = await Ciudadanomodel().registrarCiudadano(datosJson: {
           "nombre" : uciudadano.txtNombre.text.trim(),
-          "apellido" : "${uciudadano.txtApellidoPat.text.trim()} ${uciudadano.txtApellidoMat.text.trim()}",
+          "apellido" : uciudadano.txtApellidoPat.text.trim(),
+          "apellido2" : uciudadano.txtApellidoMat.text.trim(),
           "correo" : uciudadano.txtcorreo.text.trim(),
           "celular" : uciudadano.txtCelular.text.trim(),
           "usuario" : uciudadano.txtusuario.text.trim(),
+          "sexo" : uciudadano.txtSexo.value.trim(),
           "clave" : uciudadano.txtClave.text.trim(),
           "tokendispositivo" : notificacioncontroller.deviceToken.value
         });
-        
-        if(!m["success"] || !m.containsKey("data")){
+
+        if(m.containsKey("error")){
           Navigator.pop(Get.context!);
-          Global().modalErrorShowDialog(context: Get.context!, mensaje: "error al Registrar el Ciudadano.");
+          Global().modalErrorShowDialog(context: Get.context!, mensaje: m["error"].toString());
           return;
         }
+        
+        // if(!m["success"] || !m.containsKey("data")){
+        //   Navigator.pop(Get.context!);
+        //   Global().modalErrorShowDialog(context: Get.context!, mensaje: "error al Registrar el Ciudadano.");
+        //   return;
+        // }
 
         int iduciuda = m["data"]["id_users"];
         uservidor.mensajeTituloServidor.value = "Registrando Coordenadas";

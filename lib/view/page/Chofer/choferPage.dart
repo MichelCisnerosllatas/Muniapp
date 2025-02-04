@@ -11,6 +11,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
   final Urutas urutas = Get.find<Urutas>();
   final UServidor uservidor = Get.find<UServidor>();
   final UUsuario uusuario = Get.find<UUsuario>();
+  final Uchofer uchofer = Get.find();
   final tubicacion = Get.find<Tubicacion>();
 
   @override
@@ -27,14 +28,40 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    print("Estado de la app: $state");
+
+    if (state == AppLifecycleState.paused) {
+      print("🔴 La app se fue al fondo o se minimizó.");
+      uchofer.saberAppCerrado.value = true; //✅ Se fue al fondo realmente
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      Future.delayed(Duration(milliseconds: 500), () { 
+        // Si después de 500ms no entró en "paused", significa que solo abrió notificaciones
+        if (!uchofer.saberAppCerrado.value ) {
+          print("📩 El usuario solo abrió la barra de notificaciones.");
+        }
+      });
+    }
+
     if (state == AppLifecycleState.resumed) {
       print("🔄 El usuario ha vuelto a la aplicación.");
-      Navegcioncontroller().detenerSeguimientoNavegacion(para: {
-        "idruta": int.parse(urutas.idRutaSeleccionadaValue.value == '' ? '0' : urutas.idRutaSeleccionadaValue.value),
-        "idinicioruta" : urutas.idinicioruta.value,
-        "iduser": uusuario.usuariologin["id_users"]
-      });  // Detener el rastreo al volver a la app
+      if (uchofer.saberAppCerrado.value){
+        
+        // Solo ejecutar si realmente la app se fue al fondo
+        if(uchofer.saberNaveMapEligida.value == 1){
+          //se ejecuta solo si el suuario elegio Google Maps
+          await Navegcioncontroller().detenerSeguimientoNavegacion(para: {
+            "idruta": int.parse(urutas.idRutaSeleccionadaValue.value == '' ? '0' : urutas.idRutaSeleccionadaValue.value),
+            "idinicioruta" : urutas.idinicioruta.value,
+            "iduser": uusuario.usuariologin["id_users"]
+          });
+        }
+        
+        // Detener el rastreo al volver a la app
+        uchofer.saberAppCerrado.value  = false; // Resetear la variable
+      }      
     }
   }
 
@@ -216,6 +243,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
                                 res = await Ubicacioncontroller().obtenerUbicacionActual();
                                 if(res){
                                   uservidor.mensajesubTituloServidor2.value = "iniciando ruta...";
+                                  uchofer.saberNaveMapEligida.value = 1;
                                   await Chofercontroller().iniciarRuta(idruta: int.parse(urutas.idRutaSeleccionadaValue.value));
                                   await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(urutas.idRutaSeleccionadaValue.value), tiponotificacion: "inicio");
                                   
@@ -235,6 +263,7 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
                                   }).toList();
 
                                   var ubifinal = mapRuta2.last;
+                                  
                                   Navigator.pop(context);
                                   await Navegcioncontroller().abrirGoogleMapsConCoordenadas(
                                     lonInicio: tubicacion.longitude.value,
@@ -253,7 +282,9 @@ class _ChoferpageState extends State<Choferpage> with WidgetsBindingObserver{
                                 if(res){
                                   uservidor.mensajesubTituloServidor2.value = "iniciando ruta...";
                                   await Chofercontroller().iniciarRuta(idruta: int.parse(urutas.idRutaSeleccionadaValue.value));
+                                  await Notifacionmodel().enviaarNotificacionChofer(idruta: int.parse(urutas.idRutaSeleccionadaValue.value), tiponotificacion: "inicio");
                                   Navigator.pop(context);
+                                  uchofer.saberNaveMapEligida.value = 2;
                                   Get.toNamed("/navegacionpage", 
                                     arguments: {
                                       "idruta": int.parse(urutas.idRutaSeleccionadaValue.value),
