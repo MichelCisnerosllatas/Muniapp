@@ -57,6 +57,8 @@ void iniciarControladoresGetx() {
   Get.put(Uciudadano());
   Get.put(Uadmin());
   Get.put(Uchofer());
+  Get.put(UciudadanoMapRegistrociudadano2());
+  Get.put(UciudadanoMapciudadanapage2());
 
   Get.put(Notificacioncontroller());
   Get.put(Personalcontroller());
@@ -64,7 +66,9 @@ void iniciarControladoresGetx() {
   Get.put(Themecontroller());
   Get.put(Ubicacioncontroller());
   Get.put(Chofercontroller());
-  Get.put(Navegcioncontroller());
+  Get.put(Navegcioncontroller());  
+  Get.put(MapBoxCiudadanoRegistroController());
+  Get.put(MapBoxCiudadanoPage2Controller());
   Get.put(Ciudadanocontroller());
   Get.put(Admincontroller());
 

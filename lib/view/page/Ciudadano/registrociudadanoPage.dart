@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../config/library/import.dart';
 
 class Registrociudadanopage extends StatefulWidget {
@@ -8,7 +10,8 @@ class Registrociudadanopage extends StatefulWidget {
 }
 
 class _RegistrociudadanopageState extends State<Registrociudadanopage> {
-  final Uciudadano uciudadano = Get.find<Uciudadano>();
+  final Uciudadano uciudadano = Get.put(Uciudadano());
+  final Ciudadanocontroller ciudadanocontroller = Get.put(Ciudadanocontroller());	
   final List<String> items = [
     'Masculino',
     'Femenino',
@@ -17,7 +20,15 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
   @override
   void initState() {
     super.initState();
-    Ciudadanocontroller().initStateRegistroCiudadano();
+    ciudadanocontroller.initStateRegistroCiudadano();
+  }
+
+  @override
+  void dispose() {
+    print("🗑️ Eliminando controladores...");
+    Get.delete<Uciudadano>();	
+    Get.delete<Ciudadanocontroller>();
+    super.dispose();
   }
 
   @override
@@ -36,15 +47,29 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
 
-              TextButton(
-                onPressed: (){}, 
-                child: Column(children: [
-                  Style.estiloIcon(icon: Icons.camera_alt, size: 100),
-                  Style.textTitulo(mensaje: "Foto"),
-                ],)
-              ),
+              Obx(() => TextButton(
+                onPressed: () async {
+                  final resultado = await Global().obtenerImagen(tieneFoto: uciudadano.fotoCiudadano.value != null);
 
-              
+                  if (resultado.containsKey("foto") && resultado["foto"] != null) {
+                    uciudadano.fotoCiudadano.value = File(resultado["foto"].path);
+                  } else if (resultado.containsKey("eliminar") && resultado["eliminar"] == true) {
+                    uciudadano.fotoCiudadano.value = null; // ✅ Borra la foto
+                  }
+                }, 
+                child: uciudadano.fotoCiudadano.value == null 
+                ? Column(
+                    children: [
+                      Style.estiloIcon(icon: Icons.camera_alt, size: 100),
+                      Style.textTitulo(mensaje: "Foto"),
+                    ],
+                  ) 
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Image.file(uciudadano.fotoCiudadano.value!, width: 150, height: 150, fit: BoxFit.cover),
+                  )
+              )),   
+            
               const SizedBox(height: 20),
               Style.texFormField(
                 labelText: "Nombre Completo",
@@ -102,76 +127,75 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
                       focusNode: uciudadano.focotxtCelular,
                       keyboard: TextInputType.phone,
                       validator: (p0) => p0.isEmpty ? 'Parametro Requerido' : null,
-                      maxLength: 9
+                      maxLength: 9,
+                      buildCounter: (_, {required int currentLength, required int? maxLength, required bool isFocused}) => null, // 🔥 Pasar null para ocultar el contador
                     ),
                   ),
 
                   const SizedBox(width: 10),
                   Expanded(
                     child: DropdownButtonHideUnderline(
-                      child: Obx(() => DropdownButton2<String>(
-                          isExpanded: true,
-                          hint: Row(
-                            children: [
-                              Icon(
-                                Icons.list,
-                                size: 16,
-                                color: Colors.yellow,
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              Expanded(
-                                child: Style.textSubTitulo(mensaje: "Sexo"),
-                              ),
-                            ],
-                          ),
-                          items: items.map((String item) => DropdownMenuItem<String>(
-                            value: item,
-                            child: Style.textSubTitulo(mensaje: item)
-                          )).toList(),
-                          value: uciudadano.txtSexo.value == "" ? null : uciudadano.txtSexo.value,
-                          onChanged: (String? value) {
-                            uciudadano.txtSexo.value = value!;
-                          },
-                          buttonStyleData: ButtonStyleData(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: Theme.of(context).appBarTheme.backgroundColor!,
-                              ),
-                              color: Theme.of(context).colorScheme.background,
+                      child: Obx(() => DropdownButtonFormField2<String>(
+                        isExpanded: true,
+                        hint: Row(
+                          children: [
+                            Icon(
+                              Icons.list,
+                              size: 16,
+                              color: Colors.yellow,
                             ),
-                            elevation: 2,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            maxHeight: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: Theme.of(context).appBarTheme.backgroundColor!,
-                              ),
-                              color: Theme.of(context).colorScheme.background,
+                            SizedBox(
+                              width: 4,
                             ),
-                            scrollbarTheme: ScrollbarThemeData(
-                              radius: const Radius.circular(40),
-                              thickness: MaterialStateProperty.all<double>(6),
-                              thumbVisibility: MaterialStateProperty.all<bool>(true),
+                            Expanded(
+                              child: Style.textSubTitulo(mensaje: "Sexo"),
                             ),
+                          ],
+                        ),
+                        items: items.map((String item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Style.textSubTitulo(mensaje: item)
+                        )).toList(),
+                        value: uciudadano.txtSexo.value == "" ? null : uciudadano.txtSexo.value,
+                        onChanged: (String? value) {
+                          uciudadano.txtSexo.value = value!;
+                        },
+                        buttonStyleData: ButtonStyleData(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Theme.of(context).appBarTheme.backgroundColor!,
+                            ),
+                            color: Theme.of(context).colorScheme.background,
                           ),
-                          menuItemStyleData: MenuItemStyleData(
-                            height: 50, // Ajusta la altura de cada ítem
-                            padding: EdgeInsets.symmetric(horizontal: 10), // Ajusta el padding interno
+                          elevation: 2,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Theme.of(context).appBarTheme.backgroundColor!,
+                            ),
+                            color: Theme.of(context).colorScheme.background,
+                          ),
+                          scrollbarTheme: ScrollbarThemeData(
+                            radius: const Radius.circular(40),
+                            thickness: MaterialStateProperty.all<double>(6),
+                            thumbVisibility: MaterialStateProperty.all<bool>(true),
                           ),
                         ),
-                      ),
+                        menuItemStyleData: MenuItemStyleData(
+                          height: 50, // Ajusta la altura de cada ítem
+                          padding: EdgeInsets.symmetric(horizontal: 10), // Ajusta el padding interno
+                        ),
+                        validator: (value) => value == null ? 'Campo Requerido' : null,
+                      )),
                     ),
                   ),
                 ],
               ),
-              
-
               const SizedBox(height: 20),
               Style.texFormField(
                 labelText: "Usuario",
@@ -220,6 +244,11 @@ class _RegistrociudadanopageState extends State<Registrociudadanopage> {
                   FocusManager.instance.primaryFocus?.unfocus();
                   if(uciudadano.formKeyRegistroCiudadano.currentState!.validate()){
                     Get.toNamed("/registrociudadanopage2");
+
+
+
+
+                    // Get.toNamed("/registrociudadanopage2", preventDuplicates: false);
                     // Ciudadanocontroller().registroCiudadano();
                   }
                 }

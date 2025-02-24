@@ -70,11 +70,11 @@ class _LoginhState extends State<Login> {
                       controller: tusuario.txtclave,
                       rxboolText: tusuario.boolpintartextclave,
                       focusNode: tusuario.focotxtclave,
-                      obscureText: tusuario.verclave,
+                      obscureText: tusuario.verclaveLogin,
                       validator: (p0) => p0.isEmpty ? 'Ingrese una contraseña' : null,
                       suffixIcon: Rx<Widget>(IconButton(
-                        icon: Obx(() => Icon(tusuario.verclave.value ? Icons.visibility : Icons.visibility_off)),
-                        onPressed: () => tusuario.verclave.value = !tusuario.verclave.value
+                        icon: Obx(() => Icon(tusuario.verclaveLogin.value ? Icons.visibility : Icons.visibility_off)),
+                        onPressed: () => tusuario.verclaveLogin.value = !tusuario.verclaveLogin.value
                       ))
                     ),
 

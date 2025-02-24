@@ -4,6 +4,7 @@ import '../../config/library/import.dart';
 class Ubicacionwidget {
   final tubicacion = Get.find<Tubicacion>();
   final unavegacion = Get.find<Unavegacion>();
+  final Ubicacioncontroller ubicacioncontroller = Get.find<Ubicacioncontroller>();
   
   Widget seleccionarEstiloComoPopupMenu() {
     return PopupMenuButton<String>(
@@ -13,7 +14,7 @@ class Ubicacionwidget {
         tubicacion.mapboxMapp?.style.setStyleURI(nuevoEstilo);
         await Ubicacioncontroller().obtenerCoordenasdetalleRutaChofer(idruta:int.parse( Get.find<Urutas>().idRutaSeleccionadaValue.value));
         await Ubicacioncontroller().agregarRutaAlMapa();
-        await Ubicacioncontroller().agregarIconosInicioFin();
+        await Ubicacioncontroller().mostrarPuntosInicioFin();
         await Ubicacioncontroller().centrarMapaEnRuta();
       },
       itemBuilder: (BuildContext context) {
@@ -100,7 +101,7 @@ class Ubicacionwidget {
         //   zoom: 15.0,
         // ),
         onMapCreated: (mapboxMap) async {
-          Ubicacioncontroller().crearMapBox(mapboxMap);
+          ubicacioncontroller.crearMapBox(mapboxMap);
           // await Ubicacioncontroller().cargarMapa();
 
           // Inicializa automáticamente las configuraciones al crear el mapa
@@ -109,9 +110,10 @@ class Ubicacionwidget {
           // await Ubicacioncontroller().mostrarFelchaGuia();
 
           // await Ubicacioncontroller().obtenerCoordenasDireccionAPI();
-          await Ubicacioncontroller().agregarRutaAlMapa();
-          await Ubicacioncontroller().agregarIconosInicioFin();
-          await Ubicacioncontroller().centrarMapaEnRuta();
+          await ubicacioncontroller.cargarImagenIconosInicioFin();
+          await ubicacioncontroller.agregarRutaAlMapa();
+          await ubicacioncontroller.mostrarPuntosInicioFin();
+          await ubicacioncontroller.centrarMapaEnRuta();
           
         },
       );
@@ -125,6 +127,8 @@ class Ubicacionwidget {
       // }  
     });    
   }
+
+  
 
   Widget mostrarMapaNavegacion() {
     return mapbox.MapWidget(

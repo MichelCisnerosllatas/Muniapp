@@ -1,10 +1,11 @@
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 import '../../config/library/import.dart';
 
-class Historialrutaschoferwidget {
+class Choferwidget {
   final UServidor tservidor = Get.find<UServidor>();
+  final Chofercontroller chofercontroller = Get.find<Chofercontroller>();
   final Uchofer uchofer = Get.find<Uchofer>();
-
 
   Widget bodyHostiorialChofer({required Map<String, dynamic> datos}){
     return Obx((){
@@ -13,7 +14,7 @@ class Historialrutaschoferwidget {
       } else if(tservidor.tipoError.value == 3){
         uchofer.widgetHistorialRutasChofer.value = Style.widgetNoConexion(mensaje: tservidor.mensajeTituloServidor.value, subTitulo: tservidor.mensajesubTituloServidor.value, btnReintentar: () async {
           uchofer.pantallaCargadaHistorialRutasChofer.value = false;
-          await Chofercontroller().listarHistorialRutasChofers();
+          await chofercontroller.listarHistorialRutasChofers();
         });
       } else if (tservidor.tipoError.value == 2){
         uchofer.widgetHistorialRutasChofer.value = Style.widgetErrorServidor(context: Get.context!, subTitulo: tservidor.mensajesubTituloServidor.value, mensaje: tservidor.mensajeTituloServidor.value);
@@ -22,7 +23,7 @@ class Historialrutaschoferwidget {
       } else if (uchofer.listaHistorialRutasChofer.isEmpty) {
         uchofer.widgetHistorialRutasChofer.value = Style.widgetSinRegistro(titulo: "No Hay Registro", mensaje: "Aqui se visualizaran los registros de las Unidades Recolectoras", btnReintentar: () async {
           uchofer.pantallaCargadaHistorialRutasChofer.value = false;
-          await Chofercontroller().listarHistorialRutasChofers();
+          await chofercontroller.listarHistorialRutasChofers();
         });
       }else{
         uchofer.widgetHistorialRutasChofer.value = smartRefreshHostiorialRutasChofer(seleccionado: tservidor.seleccionado.value, listRecolector: uchofer.listaHistorialRutasChofer, parametros: datos);
@@ -40,7 +41,7 @@ class Historialrutaschoferwidget {
       enableTwoLevel: !seleccionado ? true : false,
       onRefresh: () async {
         tservidor.limpiarSeleccion();
-        await Future.delayed(const Duration(seconds: 1));
+        await chofercontroller.listarHistorialRutasChofers();
         uchofer.refreshControllerHistorialRutasChofer.value.refreshCompleted();
       },
       header: WaterDropHeader(
@@ -133,7 +134,7 @@ class Historialrutaschoferwidget {
         },
       ),
       onLoading: () async {
-        await Future.delayed(const Duration(seconds: 2)); 
+        await chofercontroller.listarHistorialRutasChofers();
         uchofer.refreshControllerHistorialRutasChofer.value.loadNoData();
       },
       child: listViewbuilderHistorialRutasChofer(rxHistorialRutasChoferLista: listRecolector, datos: parametros),
@@ -175,8 +176,38 @@ class Historialrutaschoferwidget {
               ),
             ],
           ),
+          onTap: () async => await Get.toNamed('/detaellehistorialruta', arguments: rxHistorialRutasChoferLista[index]),
         );
       }
+    );
+  }
+
+  Widget mapaDetalleHistorialRutasChofer({required Map<String, dynamic> data}){    
+    return Stack(
+      children: [
+        // Widget del Mapa
+        Obx(() {
+          if(tservidor.cargaprogreso.value){
+            return LoadingAnimationWidget.hexagonDots(color: Theme.of(Get.context!).colorScheme.onBackground, size: 25);
+          } else if(uchofer.coordenadasRecorrdiasDetalleHistorialChofer.isEmpty || uchofer.coordenadasDetalleRutaHistorialChofer1.isEmpty){
+            return Style.widgetError(mensaje: "Error en las coordenadas", subTitulo: "Error en las coordenadas", btnReintentar: () async => {});
+          }else{
+            return mapbox.MapWidget(
+              key: ValueKey("mapWidgetDetalleHistorialRutasChofer"),
+              styleUri: uchofer.mapaEstiloDetalleHistorialChofer.value,
+              onMapCreated: (mapboxMap) async {
+                chofercontroller.crearMapBoxDetalleHistorialChofer(mapboxMap);       
+                await chofercontroller.mostrarRutaDetalleHistorialChofer();                
+                // await chofercontroller.cargarImagenFlecha();  // Cargar imagen antes
+                // await chofercontroller.agregarFlechasEnRuta();  // Luego agregar flechas
+                await chofercontroller.cargarImagenIconosInicioFin();
+                await chofercontroller.puntoInicioFINDetalleHistoriaChofer();
+                await chofercontroller.centrarMapaDetalleHistorialChofer();
+              },
+            );
+          }          
+        }),
+      ],
     );
   }
 }

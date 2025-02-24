@@ -1,16 +1,10 @@
+import 'dart:io';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../library/import.dart';
 
 class Uciudadano extends GetxController {
-  final formKeyRegistroCiudadano= GlobalKey<FormState>();
-  MapboxMap? mapboxMappCiudadano;
-  RxBool cargarMapaLocalizarCiudadano = false.obs;
-  RxBool mapaCaragadaCiudadano = false.obs;
-  RxList<Map<String, dynamic>> listarutasCiudadanoInicio = <Map<String, dynamic>>[].obs; // esto alimenta en el Inicio principal
-  RxList<List<double>> coordenadasRutaCiudadano = <List<double>>[].obs;  // Lista para almacenar las coordenadas de la Ruta del Camion Ciudadno
-  RxList<List<double>> coordenadasCasaCiudadano = <List<double>>[].obs;  // Lista para almacenar las coordenadas de su casa
-  // Lista para almacenar los IDs de las anotaciones agregadas
-  List<PointAnnotation> annotationIds = [];
+  final formKeyRegistroCiudadano= GlobalKey<FormState>(); 
+  Rx<File?> fotoCiudadano = Rx<File?>(null); 
 
 
   TextEditingController txtNombre = TextEditingController();
@@ -46,9 +40,22 @@ class Uciudadano extends GetxController {
 
   RxBool verClave = false.obs;
   RxBool verClave2 = false.obs;
-  RxBool cargarRegistroCiudadano = false.obs;
-  RxString mapaEstiloCiudadano = MapboxStyles.MAPBOX_STREETS.obs;
+  RxBool cargarRegistroCiudadano = false.obs;    
 
+  RxList<Map<String, dynamic>> listarutasCiudadanoInicio = <Map<String, dynamic>>[].obs; // esto alimenta en el Inicio principal
+}
+
+class UciudadanoMapRegistrociudadano2 extends GetxController{
+  // Lista para almacenar los IDs de las anotaciones agregadas
+  List<PointAnnotation> annotationIds = [];
+
+  RxString mapaEstiloCiudadano = MapboxStyles.MAPBOX_STREETS.obs;
+  MapboxMap? mapboxMappRegistroCiudadano;
+  RxBool cargarMapaLocalizarCiudadano = false.obs;
+  RxBool mapaCaragadaCiudadano = false.obs;
+  // RxList<Map<String, dynamic>> listarutasCiudadanoInicio = <Map<String, dynamic>>[].obs; // esto alimenta en el Inicio principal
+  RxList<List<double>> coordenadasRutaCiudadano = <List<double>>[].obs;  // Lista para almacenar las coordenadas de la Ruta del Camion Ciudadno
+  RxList<List<double>> coordenadasCasaCiudadano = <List<double>>[].obs;  // Lista para almacenar las coordenadas de su casa
 
   //Esto se usa en el Registro y en el Incio del Ciudadano
   RxList<Map<String, dynamic>> listarutasCiudadano = RxList<Map<String, dynamic>>([]);
@@ -58,9 +65,19 @@ class Uciudadano extends GetxController {
   RxList<Map<String, dynamic>> listaGuardadasderutasCiudadanoDropdowsbutton = RxList<Map<String, dynamic>>([]);
   RxString idRutaGuardadaCiudadanoSeleccionadaValue = ''.obs;
 
-  // RxList<int> idrutaCasaGuardada = RxList<int>([]);
-  // RxList<Map<String, List<double>>> coordenadaCasaGuardada = RxList<Map<String, List<double>>>([]);
   RxList<List<double>> coordenadaCasaGuardadalista = <List<double>>[].obs;
   RxList<Map<String, List<List<double>>>> coordenadaCasaGuardadaMap = <Map<String, List<List<double>>>>[].obs;
   RxBool saberDropDowButtonSeleccionado = false.obs;
+}
+
+class UciudadanoMapciudadanapage2 extends GetxController{
+  MapboxMap? mapboxMapCiudadanapage2;
+
+  //Variable para manejar el marcador del vehículo
+  PointAnnotationManager? pointAnnotationManager;
+  PointAnnotation? marcadorVehiculo; // Referencia del marcador
+
+  // RxList<Map<String, dynamic>> listarutasCiudadanoInicio = <Map<String, dynamic>>[].obs; // esto alimenta en el Inicio principal
+  RxList<double> coordenadaCamionActual = <double>[].obs;
+  RxList<List<double>> cooredanddetalleRuta = <List<double>>[].obs;  // Lista para almacenar las coordenadas de la Ruta del Camion Ciudadno
 }

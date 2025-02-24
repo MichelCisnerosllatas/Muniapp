@@ -97,34 +97,18 @@ class Style {
       ),
       elevation: elevation,
       shadowColor: shadowColor ?? Theme.of(Get.context!).appBarTheme.backgroundColor!,
-      color: colorFondo ?? colorBlanco,
+      color: colorFondo ?? Theme.of(Get.context!).colorScheme.background,
       child: child,
     );
   }
 
   static Obx texFormField({
-    required TextEditingController controller, 
-    String? labelText, 
-    String? hintext, 
-    Color? colorhintext, 
-    RxBool? enable, 
-    FocusNode? focusNode,     
-    bool? readOnly, 
-    double? fontsize, 
-    TextInputType? keyboard, 
-    Function(String)? validator, 
-    Color? colorBorderSide,
-    Widget? prefixIcon, 
-    Rx<Widget>? suffixIcon, // ⬅️ Cambiado para que sea reactivo
-    String? errorText, 
-    String? initialValue,
-    RxBool? rxboolText, 
-    RxBool? obscureText, // ⬅️ Ahora obscureText es RxBool
-    String? obscuringCharacter,  
-    int? maxLength, 
-    int? multilinea, 
-    Function(String)? onChanged
-  }) {
+    required TextEditingController controller, String? labelText, String? hintext, 
+    Color? colorhintext,  RxBool? enable, FocusNode? focusNode, bool? readOnly, 
+    double? fontsize, TextInputType? keyboard, Function(String)? validator, Color? colorBorderSide,
+    Widget? prefixIcon, Rx<Widget>? suffixIcon, String? errorText, String? initialValue, RxBool? rxboolText, RxBool? obscureText,
+    String? obscuringCharacter, int? maxLength, Widget? Function(BuildContext, {required int currentLength, required bool isFocused, required int? maxLength})? buildCounter, int? multilinea, Function(String)? onChanged }) {
+    
     return Obx(() {
       final validObscuringCharacter = (obscuringCharacter != null && obscuringCharacter.length == 1) ? obscuringCharacter : '•';
       return TextFormField(
@@ -167,39 +151,11 @@ class Style {
             borderRadius: BorderRadius.circular(10),
           ),
           errorText: errorText, // Ajustado para mostrar el texto de error
-        ),       
-        // decoration: InputDecoration(
-        //   contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-        //   prefixIcon: prefixIcon,
-        //   suffixIcon: suffixIcon?.value, // ⬅️ Ahora el suffixIcon es reactivo
-        //   label: Text(labelText ?? '', style: TextStyle(color: rxboolText.value ? colorRojo : colorNegro, fontSize: fontsize ?? 14)),
-        //   hintText: hintext,
-        //   hintStyle: TextStyle(color: hintext != null ? colorhintext ?? colorNegro : colorNegro, fontSize: fontsize ?? 16),
-        //   border: OutlineInputBorder(
-        //     borderSide: BorderSide( color: rxboolText.value ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   enabledBorder: OutlineInputBorder(
-        //     borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   focusedBorder: OutlineInputBorder(
-        //     borderSide: BorderSide(color: rxboolText.value == true ? colorRojo : (colorBorderSide ?? colorceleste), width: 2.0),
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   errorBorder: OutlineInputBorder(
-        //     borderSide: BorderSide(color: colorRojo),
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   focusedErrorBorder: OutlineInputBorder(
-        //     borderSide: BorderSide(color: colorRojo),
-        //     borderRadius: BorderRadius.circular(10),
-        //   ),
-        //   errorText: errorText, 
-        // ),        
+        ),            
         maxLines: multilinea ?? 1,
         keyboardAppearance: Brightness.dark,
         maxLength: maxLength,
+        buildCounter: buildCounter,
         obscureText: obscureText?.value ?? false, // ⬅️ Ahora obscureText es reactivo
         obscuringCharacter: validObscuringCharacter,
         onChanged: onChanged ?? (value) {},
@@ -208,8 +164,7 @@ class Style {
     });
   }
 
-
-  static Text textTitulo({required String mensaje, TextAlign? textAlign, Color? colorTexto, double? fontSize, int? maxlines, TextOverflow? textOverflow, bool? negitra, String? fontFamily, Color? background}) {
+  static Text textTitulo({required String mensaje, TextAlign? textAlign, Color? colorTexto, double? fontSize, int? maxlines, TextOverflow? textOverflow, bool? negitra ,bool? softWrap, String? fontFamily, Color? background}) {
     return Text(
       mensaje, 
       textAlign: textAlign, 
@@ -222,10 +177,11 @@ class Style {
       ),
       maxLines: maxlines, 
       overflow: textOverflow ?? TextOverflow.ellipsis,
+      softWrap: softWrap,
     );
   }
 
-  static Text textSubTitulo({required String mensaje, TextAlign? textAlign, Color? colorTexto, double? fontSize, int? maxlines, TextOverflow? textOverflow, bool? negitra = false, String? fontFamily, Color? background}) {
+  static Text textSubTitulo({required String mensaje, TextAlign? textAlign, Color? colorTexto, double? fontSize, int? maxlines, TextOverflow? textOverflow, bool? negitra = false, bool? softWrap, String? fontFamily, Color? background}) {
     return Text(
       mensaje, 
       textAlign: textAlign, 
@@ -238,6 +194,7 @@ class Style {
       ),
       maxLines: maxlines, 
       overflow: textOverflow ?? TextOverflow.ellipsis,
+      softWrap: softWrap,
     );
   }
 

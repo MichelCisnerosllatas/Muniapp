@@ -1,12 +1,15 @@
 import 'dart:ui';
-
 import '../../config/library/import.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
 
 class Ciudadanowidget {
-  final Uciudadano uciudadano = Get.find();
-  final UServidor uservidor = Get.find();
-  final Ciudadanocontroller ciudadanocontroller = Get.find();
+  final UciudadanoMapRegistrociudadano2 uciudadanoMapRegistrociudadano2page = Get.find<UciudadanoMapRegistrociudadano2>();
+  final UciudadanoMapciudadanapage2 uciudadanoMapciudadanapage2page = Get.find<UciudadanoMapciudadanapage2>();
+  final MapBoxCiudadanoRegistroController mapBoxCiudadanoRegistroController = Get.find<MapBoxCiudadanoRegistroController>();
+  final MapBoxCiudadanoPage2Controller mapBoxCiudadanoPage2Controller = Get.find<MapBoxCiudadanoPage2Controller>();
+  final Uciudadano uciudadano = Get.find<Uciudadano>();
+  final UServidor uservidor = Get.find<UServidor>();
+  final Ciudadanocontroller ciudadanocontroller = Get.find<Ciudadanocontroller>();
 
   Obx mostrarRutasCiudadanoInicio(){
     return Obx((){
@@ -21,7 +24,7 @@ class Ciudadanowidget {
               child: ListTile(
                 onTap: () => Get.toNamed('/ciudadanopage2', arguments: item),
                 contentPadding: EdgeInsets.only(right: 10, left: 10),
-                leading: Style.estiloIcon(icon: Icons.check_circle, size: 25, color: item["ruta_activa"] == true ? Colors.greenAccent : Theme.of(context).colorScheme.error),
+                leading: Style.estiloIcon(icon: Icons.check_circle, size: 25, color: (item.containsKey("ruta_activa") && item["ruta_activa"] is Map && item["ruta_activa"]?["activa"] == true) ? Colors.greenAccent : Theme.of(context).colorScheme.error),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10), 
                   // side: BorderSide(color: Theme.of(Get.context!).appBarTheme.backgroundColor!, width: 2)
@@ -37,37 +40,38 @@ class Ciudadanowidget {
     });
   }
   
-  Widget mostrarMapaCiudadanoRegistro() {
+  Widget mostrarMapaCiudadanoRegistro({Map<String, dynamic>? data}) {
     return Stack(
       children: [
         // Widget del Mapa
         Obx(() {
           return mapbox.MapWidget(
             key: ValueKey("mapWidgetCiudadano"),
-            styleUri: uciudadano.mapaEstiloCiudadano.value,
-            onMapCreated: (mapboxMap) async {
-              ciudadanocontroller.crearMapBoxCiudadano(mapboxMap);
-              await ciudadanocontroller.agregarRutaAlMapaCiudadano();
-              await ciudadanocontroller.agregarIconosInicioFinCiudadano();
-              await ciudadanocontroller.centrarMapaEnRutaCiudadano();
-              // if(!uciudadano.saberDropDowButtonSeleccionado.value){
-              //   await ciudadanocontroller.mostrarAnotacionesRutaCoordenadaGuardada(uciudadano.idRutaGuardadaCiudadanoSeleccionadaValue.value);
-              // }
+            styleUri: uciudadanoMapRegistrociudadano2page.mapaEstiloCiudadano.value,
+            onMapCreated: (mapboxMap) {
+              mapBoxCiudadanoRegistroController.crearMapBoxCiudadano(mapboxMap);              
+            },
+            onMapLoadedListener: (mapLoadedEventData) async{
+              await mapBoxCiudadanoRegistroController.obtenerDetalleRutaMapBoxCiudadanoRegistro(idruta: int.parse(data?['id_ruta'].toString() ?? '0'));
+              await mapBoxCiudadanoRegistroController.cargarImagenIconosInicioFin();
+              await mapBoxCiudadanoRegistroController.mostrarRutaCamionMapaCiudadano();
+              await mapBoxCiudadanoRegistroController.mostrarIconosInicioFin();
+              await mapBoxCiudadanoRegistroController.centrarMapaEnRutaCiudadano();
             },
             onTapListener: (mapbox.MapContentGestureContext context) {
-              if(uciudadano.saberDropDowButtonSeleccionado.value){
-                ciudadanocontroller.onMapTapCiudadano(context);       
+              if(uciudadanoMapRegistrociudadano2page.saberDropDowButtonSeleccionado.value){
+                mapBoxCiudadanoRegistroController.onMapTapCiudadano(context);       
               }                     
             },
           );
         }),
 
         Positioned(
-          bottom: 15,
+          bottom: 5,
           left: 0,
           right: 65,
           child: Obx(() {
-            if(uciudadano.saberDropDowButtonSeleccionado.value && uciudadano.coordenadasCasaCiudadano.isNotEmpty){
+            if(uciudadanoMapRegistrociudadano2page.saberDropDowButtonSeleccionado.value && uciudadanoMapRegistrociudadano2page.coordenadasCasaCiudadano.isNotEmpty){
               return Container(
                 height: 57,  // Reducido el tamaño total de la lista
                 padding: EdgeInsets.only(left: 5, right: 16),
@@ -82,15 +86,15 @@ class Ciudadanowidget {
                       ),
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: uciudadano.coordenadasCasaCiudadano.length,
+                        itemCount: uciudadanoMapRegistrociudadano2page.coordenadasCasaCiudadano.length,
                         itemBuilder: (context, index) {
                           return Stack(
                             clipBehavior: Clip.none, // Permite que el ícono sobresalga del contenedor
                             children: [
                               GestureDetector(
                                 onTap: () {
-                                  if(uciudadano.saberDropDowButtonSeleccionado.value){
-                                    ciudadanocontroller.eliminarAnotacionMapaCiudadano(index);
+                                  if(uciudadanoMapRegistrociudadano2page.saberDropDowButtonSeleccionado.value){
+                                    mapBoxCiudadanoRegistroController.eliminarAnotacionMapaCiudadano(index);
                                   }                              
                                 },
                                 child: Container(
@@ -137,7 +141,7 @@ class Ciudadanowidget {
                                 right: -2, // Ajusta la posición a la derecha del elemento
                                 child: GestureDetector(
                                   onTap: () {
-                                    ciudadanocontroller.eliminarAnotacionMapaCiudadano(index);
+                                    mapBoxCiudadanoRegistroController.eliminarAnotacionMapaCiudadano(index);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(3),
@@ -164,7 +168,7 @@ class Ciudadanowidget {
                   ),
                 ),
               );
-            } else if(!uciudadano.saberDropDowButtonSeleccionado.value && uciudadano.coordenadaCasaGuardadalista.isNotEmpty){
+            } else if(!uciudadanoMapRegistrociudadano2page.saberDropDowButtonSeleccionado.value && uciudadanoMapRegistrociudadano2page.coordenadaCasaGuardadalista.isNotEmpty){
               return Container(
                 height: 57,  // Reducido el tamaño total de la lista
                 padding: EdgeInsets.only(left: 5, right: 16),
@@ -180,7 +184,7 @@ class Ciudadanowidget {
                       ),
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: uciudadano.coordenadaCasaGuardadalista.length,
+                        itemCount: uciudadanoMapRegistrociudadano2page.coordenadaCasaGuardadalista.length,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                             onTap: () {
@@ -238,23 +242,37 @@ class Ciudadanowidget {
     );
   }
 
-  Widget mostrarMapaCiudadanoInicioPagina2({required Map<String, dynamic> data}) {
+  Widget mostrarMapaCiudadanoInicioPagina2({int idinicioruta = 0, int idruta = 0}) {
     return Stack(
       children: [
-
-        // Widget del Mapa
         Obx(() {
           return mapbox.MapWidget(
             key: ValueKey("mapWidgetCiudadanoInicio"),
-            styleUri: uciudadano.mapaEstiloCiudadano.value,
-            onMapCreated: (mapboxMap) async {
-              ciudadanocontroller.crearMapBoxCiudadano(mapboxMap);
-              await ciudadanocontroller.detalleRutaCamionCiudadano(idruta: Get.arguments['id_ruta']);
-              await ciudadanocontroller.agregarRutaAlMapaCiudadano();
-              await ciudadanocontroller.agregarIconosInicioFinCiudadano();
-              await ciudadanocontroller.centrarMapaEnRutaCiudadano();
+            styleUri: uciudadanoMapRegistrociudadano2page.mapaEstiloCiudadano.value,
+            onMapCreated: (mapboxMap) {
+              mapBoxCiudadanoPage2Controller.crearMapBoxCiudadanoPage2(mapboxMap);
+              mapBoxCiudadanoPage2Controller.inicializarPointAnnotationManager();
+            },
+            onMapLoadedListener: (mapLoadedEventData) async {
+              await mapBoxCiudadanoPage2Controller.cargarImagenVehiculo();
+              await mapBoxCiudadanoPage2Controller.obtenerDetalleRutaMapBoxCiudadanoRegistro(idruta: idruta);
+              await mapBoxCiudadanoPage2Controller.cargarImagenIconosInicioFin();
+              await mapBoxCiudadanoPage2Controller.mostrarRutaCamionMapaCiudadano();
+              await mapBoxCiudadanoPage2Controller.mostrarPuntosInicioFin();
+              
+              // ✅ Se centra la ruta después de asegurarse de que todo está listo
+              await mapBoxCiudadanoPage2Controller.centrarMapaEnRutaCiudadano();
             },
           );
+        }),
+
+        // 🔹 Este `Obx()` detecta cuando `coordenadaCamionActual` cambia y muestra el icono del vehículo
+        Obx(() {
+          if (uciudadanoMapciudadanapage2page.coordenadaCamionActual.isNotEmpty) {
+            print("🚚 Coordenada del camión 2: ${uciudadanoMapciudadanapage2page.coordenadaCamionActual}");
+            mapBoxCiudadanoPage2Controller.mostrarIconoVehiculo(uciudadanoMapciudadanapage2page.coordenadaCamionActual);
+          }
+          return SizedBox(); // No renderiza nada, solo escucha cambios
         }),
       ],
     );

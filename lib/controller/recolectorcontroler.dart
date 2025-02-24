@@ -31,4 +31,36 @@ class Recolectorcontroler extends GetxController{
     trecolector.pantallaCargadaRecolector.value = true;
     tservidor.cargaprogreso.value = false;
   }
+
+  Future<void> showbuttonshetOpcionesRecolector({Map<String, dynamic>? datos}) async {
+    try{
+      showModalBottomSheet(
+        context: Get.context!, 
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder:(context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Style.estiloIcon(icon: Icons.car_crash_outlined),
+                title: Style.textTitulo(mensaje: "Detalle Recolector"),
+              ),
+              ListTile(
+                leading: Style.estiloIcon(icon: Icons.delete, color: Theme.of(context).colorScheme.error),
+                title: Style.textTitulo(mensaje: "Eliminar"),
+              ),
+              ListTile(
+                leading: Style.estiloIcon(icon: Icons.edit),
+                title: Style.textTitulo(mensaje: "Editar"),
+              ),
+            ],
+          );
+        },
+      );
+    }catch(ex){
+      Global().modalErrorShowDialog(context: Get.context!, mensaje: ex.toString());
+      return;
+    }
+  }
 }

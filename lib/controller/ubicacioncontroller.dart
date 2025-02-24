@@ -1,4 +1,5 @@
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart' as mapbox;
+import 'dart:ui' as ui;
 import '../config/library/import.dart';
 
 class Ubicacioncontroller extends GetxController {
@@ -146,35 +147,93 @@ class Ubicacioncontroller extends GetxController {
     }
 
     try {
-      // Obtener la lista de coordenadas
-      List<List<double>> coords = tubicacion.coordenadasRuta;
+      // 🔹 Obtener los puntos de inicio y fin
+      var inicio = tubicacion.coordenadasRuta.first;
+      var fin = tubicacion.coordenadasRuta.last;
 
-      // Calcular el punto medio de la ruta
-      double sumLat = 0.0, sumLng = 0.0;
-      for (var coord in coords) {
-        sumLng += coord[0];
-        sumLat += coord[1];
-      }
+      // 🔹 Calcular la distancia total de la ruta
+      double distanciaTotal = Global().calcularDistanciaTotalRuta(tubicacion.coordenadasRuta);
 
-      double centerLng = sumLng / coords.length;
-      double centerLat = sumLat / coords.length;
+      // 🔹 Calcular el centro entre los dos puntos
+      double centerLat = (inicio[1] + fin[1]) / 2;
+      double centerLng = (inicio[0] + fin[0]) / 2;
 
-      // Establecer la cámara en el punto medio calculado
+      // 🔹 Calcular el zoom basado en la distancia total
+      double zoom = Global().calcularZoomSegunDistanciaMap(distanciaTotal);
+
+      // 🔹 Mover la cámara al centro con el zoom calculado
       await tubicacion.mapboxMapp!.setCamera(
-        mapbox.CameraOptions(
-          center: mapbox.Point(coordinates: mapbox.Position(centerLng, centerLat)),
-          zoom: 13.0,  // Ajusta el nivel de zoom según sea necesario
-          padding: mapbox.MbxEdgeInsets(top: 50.0, left: 50.0, bottom: 50.0, right: 50.0)
-        ),
+          mapbox.CameraOptions(
+              center: mapbox.Point(coordinates: mapbox.Position(centerLng, centerLat)),
+              zoom: zoom,
+              padding: mapbox.MbxEdgeInsets(top: 100.0, left: 100.0, bottom: 100.0, right: 100.0)
+          ),
       );
 
-      print("Cámara centrada en la ruta con éxito.");
+      print("✅ Cámara centrada correctamente en la ruta.");
+      print("📏 Distancia Total de la Ruta: ${distanciaTotal.toStringAsFixed(2)} km");
     } catch (e) {
       print("Error al centrar el mapa en la ruta: $e");
     }
   }
 
-  Future<void> agregarIconosInicioFin() async {
+
+  Future<void> cargarImagenIconosInicioFin() async {
+    if (tubicacion.mapboxMapp == null) {
+        print("Mapa no inicializado.");
+        return;
+    }
+
+    try {
+      // Cargar imagen para el punto de INICIO
+      ByteData bytesInicio = await rootBundle.load("assets/img/circleinicio.png");
+      Uint8List listInicio = bytesInicio.buffer.asUint8List();
+
+      ui.Codec codecInicio = await ui.instantiateImageCodec(listInicio);
+      ui.FrameInfo frameInfoInicio = await codecInicio.getNextFrame();
+      ui.Image imageInicio = frameInfoInicio.image;
+
+      int widthInicio = imageInicio.width;
+      int heightInicio = imageInicio.height;
+
+      mapbox.MbxImage mbxImageInicio = mapbox.MbxImage(
+        width: widthInicio,
+        height: heightInicio,
+        data: listInicio,
+      );
+
+      await tubicacion.mapboxMapp!.style.addStyleImage(
+        "start-icon", 1.0, mbxImageInicio, false, [], [], null,
+      );
+
+      // Cargar imagen para el punto de FIN
+      ByteData bytesFin = await rootBundle.load("assets/img/circlefin.png");
+      Uint8List listFin = bytesFin.buffer.asUint8List();
+
+      ui.Codec codecFin = await ui.instantiateImageCodec(listFin);
+      ui.FrameInfo frameInfoFin = await codecFin.getNextFrame();
+      ui.Image imageFin = frameInfoFin.image;
+
+      int widthFin = imageFin.width;
+      int heightFin = imageFin.height;
+
+      mapbox.MbxImage mbxImageFin = mapbox.MbxImage(
+        width: widthFin,
+        height: heightFin,
+        data: listFin,
+      );
+
+      await tubicacion.mapboxMapp!.style.addStyleImage(
+        "end-icon", 1.0, mbxImageFin, false, [], [], null,
+      );
+
+      print("✅ Iconos personalizados cargados correctamente.");
+    } catch (e) {
+      print("Error al cargar iconos personalizados: $e");
+    }
+  }
+
+  Future<void> mostrarPuntosInicioFin() async {
     if (tubicacion.mapboxMapp == null || tubicacion.coordenadasRuta.isEmpty) {
       print("Mapa no inicializado o no hay coordenadas disponibles.");
       return;
@@ -185,7 +244,35 @@ class Ubicacioncontroller extends GetxController {
       var inicio = tubicacion.coordenadasRuta.first;
       var fin = tubicacion.coordenadasRuta.last;
 
-      var geoJson = jsonEncode({
+      // var geoJson = jsonEncode({
+      //   "type": "FeatureCollection",
+      //   "features": [
+      //     {
+      //       "type": "Feature",
+      //       "geometry": {
+      //         "type": "Point",
+      //         "coordinates": inicio
+      //       },
+      //       "properties": {
+      //         "title": "Inicio",
+      //         "icon": "marker"  // Icono predeterminado de Mapbox
+      //       }
+      //     },
+      //     {
+      //       "type": "Feature",
+      //       "geometry": {
+      //         "type": "Point",
+      //         "coordinates": fin
+      //       },
+      //       "properties": {
+      //         "title": "Fin",
+      //         "icon": "marker"
+      //       }
+      //     }
+      //   ]
+      // });
+
+      var geoJsonInicio = jsonEncode({
         "type": "FeatureCollection",
         "features": [
           {
@@ -195,10 +282,16 @@ class Ubicacioncontroller extends GetxController {
               "coordinates": inicio
             },
             "properties": {
-              "title": "Inicio",
-              "icon": "marker"  // Icono predeterminado de Mapbox
+              "title": "Punto de Inicio",
+              "icon": "start-icon"
             }
-          },
+          }
+        ]
+      });
+
+      var geoJsonFin = jsonEncode({
+        "type": "FeatureCollection",
+        "features": [
           {
             "type": "Feature",
             "geometry": {
@@ -206,33 +299,76 @@ class Ubicacioncontroller extends GetxController {
               "coordinates": fin
             },
             "properties": {
-              "title": "Fin",
-              "icon": "marker"
+              "title": "Destino Final",
+              "icon": "end-icon"
             }
           }
         ]
       });
 
       // Agregar la fuente de datos con puntos de inicio y fin
+      // await tubicacion.mapboxMapp!.style.addSource(
+      //   mapbox.GeoJsonSource(id: "pointsSource", data: geoJson),
+      // );
+
+      // Agregar la fuente de datos para Inicio
       await tubicacion.mapboxMapp!.style.addSource(
-        mapbox.GeoJsonSource(id: "pointsSource", data: geoJson),
+        mapbox.GeoJsonSource(id: "startSource", data: geoJsonInicio),
       );
 
-      // Agregar la capa de símbolos para mostrar los iconos predefinidos
+      // Agregar la fuente de datos para Fin
+      await tubicacion.mapboxMapp!.style.addSource(
+        mapbox.GeoJsonSource(id: "endSource", data: geoJsonFin),
+      );
+
+      // Agregar la capa de símbolos para el punto de INICIO (AZUL)
       await tubicacion.mapboxMapp!.style.addLayer(
         mapbox.SymbolLayer(
-          id: "pointsLayer",
-          sourceId: "pointsSource",
-          iconImage: "marker",  // Usando el ícono de marcador predeterminado de Mapbox
-          iconSize: 3,  // Tamaño del icono
-          textField: "{title}",  // Accede a la propiedad 'title' del GeoJSON
-          textSize: 14.0,  // Tamaño del texto
-          textOffset: [0, 1.5],  // Posición del texto encima del icono
+          id: "startLayer",
+          sourceId: "startSource",
+          iconImage: "start-icon",
+          iconSize: 0.07,
+
+          //Personalización del texto para Inicio
+          textField: "Punto de Inicio",
+          textSize: 14.0,
+          textColor: Colors.blue.value, //Color Azul
+          textOffset: [0, 1.5], //Mantener texto debajo del icono
+          textAnchor: mapbox.TextAnchor.TOP,
+          textFont: ["Open Sans Bold"],
         ),
       );
 
+      // Agregar la capa de símbolos para el punto de FIN (ROJO)
+      await tubicacion.mapboxMapp!.style.addLayer(
+        mapbox.SymbolLayer(
+          id: "endLayer",
+          sourceId: "endSource",
+          iconImage: "end-icon",
+          iconSize: 0.07,
 
-      print("Iconos de inicio y fin agregados correctamente.");
+          // Personalización del texto para Fin
+          textField: "Destino Final",
+          textSize: 14.0,
+          textColor: Colors.red.value, // Color Rojo
+          textOffset: [0, 1.0], // Mover texto más arriba
+          textAnchor: mapbox.TextAnchor.TOP,
+          textFont: ["Open Sans Bold"],
+        ),
+      );
+
+      // // Agregar la capa de símbolos para mostrar los iconos predefinidos
+      // await tubicacion.mapboxMapp!.style.addLayer(
+      //   mapbox.SymbolLayer(
+      //     id: "pointsLayer",
+      //     sourceId: "pointsSource",
+      //     iconImage: "marker",  // Usando el ícono de marcador predeterminado de Mapbox
+      //     iconSize: 3,  // Tamaño del icono
+      //     textField: "{title}",  // Accede a la propiedad 'title' del GeoJSON
+      //     textSize: 14.0,  // Tamaño del texto
+      //     textOffset: [0, 1.5],  // Posición del texto encima del icono
+      //   ),
+      // );
     } catch (e) {
       print("Error al agregar los iconos de inicio/fin: $e");
     }

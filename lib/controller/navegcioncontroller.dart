@@ -13,19 +13,19 @@ class Navegcioncontroller extends GetxController{
 
   Future<void> abrirGoogleMapsConCoordenadas({double? latInicio, double? lonInicio, double? latDestino, double? lonDestino}) async {
     bool googleMapsInstalado = await verificarGoogleMapsInstalado();
-
     String googleMapsUrl;
     
     if (googleMapsInstalado) {
-      // Si Google Maps está instalado, usa el esquema de la app (funciona en iOS y Android)
-      iniciarSeguimientoNavegacion();
+      // Si Google Maps está instalado, usa el esquema de la app (funciona en iOS y Android)      
       googleMapsUrl = "comgooglemaps://?saddr=$latInicio,$lonInicio&daddr=$latDestino,$lonDestino&directionsmode=driving";
     } else {
       // Si Google Maps NO está instalado, usa el enlace web
       googleMapsUrl = "https://www.google.com/maps/dir/?api=1&origin=$latInicio,$lonInicio&destination=$latDestino,$lonDestino&travelmode=driving";
     }
 
+    
     if (await canLaunch(googleMapsUrl)) {
+      iniciarSeguimientoNavegacion();
       await launch(googleMapsUrl);
     } else {
       print("⚠️ No se pudo abrir Google Maps.");
@@ -302,7 +302,7 @@ class Navegcioncontroller extends GetxController{
       return;
     }    
   }
-
+  
   void iniciarSeguimientoNavegacion() {
     positionStream = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -310,8 +310,9 @@ class Navegcioncontroller extends GetxController{
         // LocationAccuracy.best ////Similar a high, pero con más intentos de precisión. Consume más batería.
         // LocationAccuracy.medium // Para obtener ubicaciones razonablemente precisas sin consumir demasiada batería.
         // LocationAccuracy.low ////Cuando solo necesitas una ubicación aproximada, como en apps de clima.
-        accuracy: LocationAccuracy.high, //Utiliza GPS en exteriores, Proporciona ubicaciones más precisas (alrededor de 5 a 10 metros de margen de error).
+        accuracy: uchofer.saberNaveMapEligida.value == 2 ? LocationAccuracy.high : LocationAccuracy.bestForNavigation, //Utiliza GPS en exteriores, Proporciona ubicaciones más precisas (alrededor de 5 a 10 metros de margen de error).
         distanceFilter: 1, //Obtiene nuevas coordenadas cada vez que el usuario se mueve al menos 1 metro
+        // timeLimit: uchofer.saberNaveMapEligida.value == 2 ? null : Duration(seconds: 2), //Si el usuario no se mueve por 30 segundos, se detiene la ubicación
       ),
     ).listen((Position position) async {
       tubicacion.latidude.value = position.latitude;
@@ -324,18 +325,22 @@ class Navegcioncontroller extends GetxController{
         "coordenaday" : tubicacion.latidude.value.toString(),
       });
 
-      double bearing = position.heading;  // Obtener el rumbo del usuario en grados
-      Global().mensajeShowToast(mensaje: "${m["message"]} latidude: ${tubicacion.latidude.value}, longitude: ${tubicacion.longitude.value}" );
+      if(uchofer.saberNaveMapEligida.value == 2){
+        double bearing = position.heading;  // Obtener el rumbo del usuario en grados
+        // Global().mensajeShowToast(mensaje: "${m["message"]} latidude: ${tubicacion.latidude.value}, longitude: ${tubicacion.longitude.value}" );
 
-      // Ajustar la cámara a la nueva ubicación
-      unavegacion.mapboxMappNavegacion?.setCamera(
-        mapbox.CameraOptions(
-          center: mapbox.Point(coordinates: mapbox.Position(position.longitude, position.latitude)),
-          zoom: 16.0,
-          bearing: bearing,  // Dirección del usuario
-          pitch: 50.0,  // Vista 3D más inclinada
-        ),
-      );
+        // Ajustar la cámara a la nueva ubicación
+        unavegacion.mapboxMappNavegacion?.setCamera(
+          mapbox.CameraOptions(
+            center: mapbox.Point(coordinates: mapbox.Position(position.longitude, position.latitude)),
+            zoom: 16.0,
+            bearing: bearing,  // Dirección del usuario
+            pitch: 50.0,  // Vista 3D más inclinada
+          ),
+        );
+      }      
+    },onError: (error) {
+      print("⚠️ Error en la ubicación: $error");
     });
 
 

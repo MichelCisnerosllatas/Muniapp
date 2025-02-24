@@ -1,9 +1,55 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../../config/library/import.dart';
 
 class Global {
+
+  final picker = ImagePicker();
+
+  /// 🔥 Método para monitorear la conexión a Internet
+  void monitorearConexionInternet() async {
+    final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
+
+    // This condition is for demo purposes only to explain every connection type.
+    // Use conditions which work for your requirements.
+    if (connectivityResult.contains(ConnectivityResult.mobile)) {
+      // Mobile network available.
+    } else if (connectivityResult.contains(ConnectivityResult.wifi)) {
+      // Wi-fi is available.
+      // Note for Android:
+      // When both mobile and Wi-Fi are turned on system will return Wi-Fi only as active network type
+    } else if (connectivityResult.contains(ConnectivityResult.ethernet)) {
+      // Ethernet connection available.
+    } else if (connectivityResult.contains(ConnectivityResult.vpn)) {
+      // Vpn connection active.
+      // Note for iOS and macOS:
+      // There is no separate network interface type for [vpn].
+      // It returns [other] on any device (also simulator)
+    } else if (connectivityResult.contains(ConnectivityResult.bluetooth)) {
+      // Bluetooth connection available.
+    } else if (connectivityResult.contains(ConnectivityResult.other)) {
+      // Connected to a network which is not in the above mentioned networks.
+    } else if (connectivityResult.contains(ConnectivityResult.none)) {
+      // No available network types
+    }
+
+    // connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    //   if (result == ConnectivityResult.none) {
+    //     print("❌ Sin conexión a Internet. Deteniendo seguimiento...");
+    //     detenerSeguimientovehiculotiemporeal();
+    //     isTrackingActive = true; // Guardamos que el seguimiento estaba activo
+    //     Get.snackbar("Sin conexión", "No hay Internet. Seguimiento detenido.", snackPosition: SnackPosition.TOP);
+    //   } else {
+    //     if (isTrackingActive) {
+    //       print("✅ Conexión restablecida. Reiniciando seguimiento...");
+    //       isTrackingActive = false;
+    //       iniciarSeguimientoVehiculo(); // 🔥 Reiniciar solo si estaba activo antes
+    //     }
+    //   }
+    // });
+  }
 
   String formatearFecha(String fecha) {
     try {
@@ -17,6 +63,74 @@ class Global {
     }
   }
 
+  Future<Map<String, dynamic>> obtenerImagen({required bool tieneFoto}) async {
+    XFile? foto;
+    bool eliminar = false;
+
+    final resultado = await showModalBottomSheet<Map<String, dynamic>>(
+      showDragHandle: true,
+      backgroundColor: Theme.of(Get.context!).colorScheme.background,
+      context: Get.context!,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Style.textTitulo(mensaje: "Seleccione una opción"),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    foto = await picker.pickImage(source: ImageSource.camera);
+                    Navigator.pop(context, {"foto": foto});
+                  },
+                  child: Column(
+                    children: [
+                      Style.estiloIcon(icon: Icons.camera_alt_outlined, size: 30),
+                      Style.textTitulo(mensaje: "Cámara"),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    foto = await picker.pickImage(source: ImageSource.gallery);
+                    Navigator.pop(context, {"foto": foto});
+                  },
+                  child: Column(
+                    children: [
+                      Style.estiloIcon(icon: Icons.photo_outlined, size: 30),
+                      Style.textTitulo(mensaje: "Galería"),
+                    ],
+                  ),
+                ),
+                if(tieneFoto) TextButton(
+                  onPressed: () {
+                    eliminar = true;
+                    Navigator.pop(context, {"eliminar": true});
+                  },
+                  child: Column(
+                    children: [
+                      Style.estiloIcon(icon: Icons.delete, size: 30, color: Colors.red),
+                      Style.textTitulo(mensaje: "Eliminar"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
+        );
+      },
+    );
+
+    if (resultado != null) {
+      return resultado;
+    } else {
+      return {};
+    }
+  }
 
   String obtenerSaludo() {
     DateTime now = DateTime.now();
@@ -31,7 +145,6 @@ class Global {
       return "¡Buenas noches! 🌙";
     }
   }
-
 
   bool validarJson(String source) {
     try {
@@ -311,4 +424,47 @@ class Global {
       },
     );
   }
+
+  // 🔹 Función para calcular la distancia total de la ruta sumando cada segmento
+  double calcularDistanciaTotalRuta(List<List<double>> coordenadas) {
+    if (coordenadas.length < 2) return 0.0; // Si hay menos de 2 puntos, no hay distancia
+    double distanciaTotal = 0.0;
+
+    for (int i = 0; i < coordenadas.length - 1; i++) {
+      double lat1 = coordenadas[i][1];
+      double lon1 = coordenadas[i][0];
+      double lat2 = coordenadas[i + 1][1];
+      double lon2 = coordenadas[i + 1][0];
+
+      distanciaTotal += calcularDistanciaMap(lat1: lat1, lon1: lon1, lat2: lat2, lon2: lon2);
+    }
+    return distanciaTotal;
+  }
+
+  // 🔹 Calcular la distancia usando la diagonal del Bounding Box
+  double calcularDistanciaMap({double? lat1, double? lon1, double? lat2, double? lon2}) {
+    const double R = 6371; // Radio de la Tierra en km
+    double dLat = (lat2! - lat1!) * pi / 180;
+    double dLon = (lon2! - lon1!) * pi / 180;
+    double a = sin(dLat / 2) * sin(dLat / 2) + cos(lat1 * pi / 180) * cos(lat2 * pi / 180) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return (R * c) * 1000; // 🔥 Convertimos a METROS
+  }
+
+  // 🔹 Función optimizada para calcular el zoom según la distancia
+  double calcularZoomSegunDistanciaMap(double distancia) {
+    print("Distancia: $distancia");
+    if (distancia <= 100) return 18.50;
+    if (distancia <= 200) return 17.50;
+    if (distancia <= 400) return 16;
+    if (distancia <= 1000) return 14.50;
+    if (distancia <= 1500) return 14.30;
+    if (distancia <= 3000) return 13;
+    if (distancia <= 5000) return 14;
+    if (distancia <= 7000) return 13;
+    if (distancia <= 10000) return 12;
+    return 10.0; // 🔭 Más de 10 km
+  }
+
 }

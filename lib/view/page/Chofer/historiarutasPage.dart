@@ -1,4 +1,4 @@
-import 'package:muniapp/view/widgets/historialrutaschoferWidget.dart';
+import 'package:muniapp/view/widgets/choferWidget.dart';
 
 import '../../../config/library/import.dart';
 
@@ -21,7 +21,7 @@ class _HistoriarutaspageState extends State<Historiarutaspage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: Style.estiloAppbar(leadingbool: false, title: Style.textTitulo(mensaje: "Historial de Rutas", fontSize: 16, colorTexto: Theme.of(context).appBarTheme.foregroundColor, negitra: true)),
-      body: Historialrutaschoferwidget().bodyHostiorialChofer(datos: {})
+      body: Choferwidget().bodyHostiorialChofer(datos: {})
     );
   }
 }

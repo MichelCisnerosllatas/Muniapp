@@ -9,4 +9,8 @@ class UPersonal extends GetxController {
 
   Rx<RefreshController> refreshControllerPersonal = RefreshController().obs;
   Rx<ScrollController> scrollControllerPersonal = ScrollController().obs;
+
+  RxBool mostrarDetalle = false.obs;
+  RxBool mostrarScroolTOPDetalle = false.obs;
+  RxDouble offsetScrollDetalle = 0.0.obs;
 }

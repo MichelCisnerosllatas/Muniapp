@@ -1,5 +1,3 @@
-import 'package:muniapp/view/widgets/ciudadanoWidget.dart';
-
 import '../../../config/library/import.dart';
 
 class Ciudadanopage extends StatefulWidget {
@@ -11,11 +9,20 @@ class Ciudadanopage extends StatefulWidget {
 
 class _CiudadanopageState extends State<Ciudadanopage> {
   final UUsuario uusuario = Get.find<UUsuario>();
-  final Uciudadano uciudadano = Get.find<Uciudadano>();
+  // final UciudadanoMapRegistrociudadano2 uciudadanoMapRegistrociudadano2page = Get.find<UciudadanoMapRegistrociudadano2>();
+  final Uciudadano uciudadano = Get.put(Uciudadano()); 
 
   @override
   void initState() {
     super.initState();
+    if(!Get.isRegistered<UciudadanoMapciudadanapage2>()){
+      Get.put(UciudadanoMapciudadanapage2());
+    }
+
+    if(!Get.isRegistered<MapBoxCiudadanoPage2Controller>()){
+      Get.put(MapBoxCiudadanoPage2Controller());
+    }
+    
     Ciudadanocontroller().mostrarRutasInicioCiudadano();
   }
   
@@ -59,21 +66,34 @@ class _CiudadanopageState extends State<Ciudadanopage> {
                   CircleAvatar(
                     backgroundColor: Theme.of(context).colorScheme.surface,
                     radius: 25,
-                    child: Builder(
-                      builder: (context) {
-                        List<String> palabras = uusuario.usuariologin['name'].split(' ');
-                        String iniciales;
-            
-                        if (palabras.length > 1 && palabras[1].isNotEmpty) { 
-                          iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
-                        } else {
-                          iniciales = palabras[0].substring(0, 1);
-                        }
-            
-                        return Style.textTitulo(mensaje: iniciales.toUpperCase().toString());
-                      },
+                    child: uusuario.usuariologin['profile_picture'] == null || uusuario.usuariologin['profile_picture'].isEmpty
+                    ? Builder(
+                        builder: (context) {
+                          List<String> palabras = uusuario.usuariologin['name'].split(' ');
+                          String iniciales;
+
+                          if (palabras.length > 1 && palabras[1].isNotEmpty) { 
+                            iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
+                          } else {
+                            iniciales = palabras[0].substring(0, 1);
+                          }
+
+                          return Style.textTitulo(mensaje: iniciales.toUpperCase());
+                        },
+                      )
+                    : ClipOval(
+                      child: Image.network(
+                        uusuario.usuariologin['profile_picture'],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.person, size: 30, color: Colors.grey); 
+                        },
+                      ),
                     ),
                   ),
+
                   const SizedBox(width: 10),
 
                   Expanded(
@@ -105,7 +125,12 @@ class _CiudadanopageState extends State<Ciudadanopage> {
                   children: [
                     Style.estiloIcon(icon: Icons.check_circle, size: 25, color: Colors.greenAccent),
                     Style.textSubTitulo(mensaje: "Activas: "),
-                    Obx(() => Style.textTitulo(mensaje: uciudadano.listarutasCiudadanoInicio.where((ruta) => ruta["ruta_activa"] == true).length.toString())),
+                    Obx(() => Style.textTitulo(
+                      mensaje: uciudadano.listarutasCiudadanoInicio
+                        .where((ruta) => ruta.containsKey("ruta_activa") &&
+                        ruta["ruta_activa"] is Map && ruta["ruta_activa"]?["activa"] == true
+                      ).length .toString()
+                    ))
                   ],
                 ),
             
@@ -113,8 +138,13 @@ class _CiudadanopageState extends State<Ciudadanopage> {
                   children: [
                     Style.estiloIcon(icon: Icons.check_circle, size: 25, color: Theme.of(context).colorScheme.error),
                     Style.textSubTitulo(mensaje: "Inactivas: "),
-                    Obx(() => Style.textTitulo(mensaje: uciudadano.listarutasCiudadanoInicio.where((ruta) => ruta["ruta_activa"] == false).length.toString())),
-                  ],
+                    Obx(() => Style.textTitulo(
+                      mensaje: uciudadano.listarutasCiudadanoInicio
+                        .where((ruta) => ruta.containsKey("ruta_activa") &&
+                        ruta["ruta_activa"] is Map && ruta["ruta_activa"]?["activa"] == false
+                      ).length .toString()
+                    )) 
+                 ],
                 )              
               ]
             ),

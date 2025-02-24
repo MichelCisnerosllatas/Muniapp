@@ -14,6 +14,8 @@ export 'package:dropdown_button2/dropdown_button2.dart';
 export 'package:firebase_messaging/firebase_messaging.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:flutter_local_notifications/flutter_local_notifications.dart';
+export 'package:image_picker/image_picker.dart';
+export 'package:connectivity_plus/connectivity_plus.dart';
 
 //clases
 export '../../config/api/webservice.dart';
@@ -49,7 +51,7 @@ export '../utils/upersonal.dart';
 export '../utils/trecolector.dart';
 export '../utils/ttemas.dart';
 export '../utils/tubicacion.dart';
-export '../utils/tusuario.dart';
+export '../utils/uusuario.dart';
 export '../../config/utils/tservidor.dart';
 export '../../config/utils/urutas.dart';
 export '../../config/utils/unavegacion.dart';
@@ -62,6 +64,7 @@ export '../../view/widgets/personalWidjet.dart';
 export '../../view/widgets/recolectorWidget.dart';
 export '../../view/widgets/ubicacionWidget.dart';
 export '../../view/widgets/adminWidget.dart';
+export '../../view/widgets/ciudadanoWidget.dart';
 
 //vistas
 export '../../view/login.dart';
@@ -72,7 +75,9 @@ export '../../view/page/Recolector/recolectorPage.dart';
 export '../../view/page/Vermas/temaspage.dart';
 export '../../view/page/Vermas/vermas.dart';
 export '../../view/page/Vermas/perfilusuarioPage.dart';
+export '../../view/page/Vermas/perfilmantPage.dart';
 export '../../view/page/Recolector/searchRecolector.dart';
+export '../../view/page/Recolector/detallerecolectorPage.dart';
 export '../../view/page/Personal/searchPersonal.dart';
 export '../../view/page/Ciudadano/ciudadanoPage.dart';
 export '../../view/page/Chofer/choferPage.dart';
@@ -83,3 +88,5 @@ export '../../view/page/admin/adminPage.dart';
 export '../../view/page/Ciudadano/registrociudadanoPage.dart';
 export '../../view/page/Ciudadano/registrociudadano2Page.dart';
 export '../../view/page/Ciudadano/ciudadanoPage2.dart';
+export '../../view/page/Personal/detallepersonaPage.dart';
+export '../../view/page/Chofer/detallehistorialrutaPage.dart';

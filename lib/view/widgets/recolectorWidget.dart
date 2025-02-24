@@ -22,7 +22,7 @@ class Recolectorwidget {
       } else if (trecolector.listaRecolector.isEmpty) {
         trecolector.widgetRecolector.value = Style.widgetSinRegistro(titulo: "No Hay Registro", mensaje: "Aqui se visualizaran los registros de las Unidades Recolectoras", btnReintentar: () async {
           trecolector.pantallaCargadaRecolector.value = false;
-          await Personalcontroller().listarPersonal(datos: datos);
+          await Recolectorcontroler().listarRecolector(datos: datos);
         });
       }else{
         trecolector.widgetRecolector.value = smartRefreshRecolector(seleccionado: tservidor.seleccionado.value, listRecolector: trecolector.listaRecolector, parametros: datos);
@@ -40,7 +40,7 @@ class Recolectorwidget {
       enableTwoLevel: !seleccionado ? true : false,
       onRefresh: () async {
         tservidor.limpiarSeleccion();
-        await Future.delayed(const Duration(seconds: 1));
+        await Recolectorcontroler().listarRecolector(datos: parametros);
         trecolector.refreshControllerRecolector.value.refreshCompleted();
       },
       header: WaterDropHeader(
@@ -149,17 +149,146 @@ class Recolectorwidget {
           style: ListTileStyle.list,
           dense: true,
           contentPadding: EdgeInsets.zero,
-          leading: Container( width: 40, height: 40,
-            decoration: BoxDecoration(
-              // color: Colors.blue,
-              borderRadius: BorderRadius.circular(8),
+          title: Style.estiloCard(
+            colorBorde: Colors.transparent,
+            elevation: 4,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(rxPersonalLista[index]["vehiculo_foto"],
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    // 📌 Indicador de carga mientras la imagen se está descargando
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child; // Si ya cargó, muestra la imagen
+
+                      return Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300], // Color de fondo mientras carga
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.blueAccent,
+                            value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                            : null, // Barra de progreso si se conoce el tamaño
+                          ),
+                        ),
+                      );
+                    },
+
+                    // 📌 En caso de error al cargar la imagen
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(Icons.car_crash, size: 50, color: Colors.grey),
+                      );
+                    },
+                  ),
+                ),
+                
+            
+                const SizedBox(width: 10),
+            
+                // 📌 Información del Vehículo
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      infoTextRecolector("Nombre : ", rxPersonalLista[index]["vehiculo_nombre"]),
+                      Divider(),
+                      // const SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          infoTextRecolector("Serie: ", rxPersonalLista[index]["vehiculo_serie"]),
+                          infoTextRecolector("Color: ", rxPersonalLista[index]["vehiculo_color_uno"])                          
+                        ],
+                      ),                                               
+                      
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                           infoTextRecolector("Marca: ", rxPersonalLista[index]["vehiculo_marca"]),
+                          infoTextRecolector("Modelo: ", rxPersonalLista[index]["vehiculo_anho_modelo"]),                          
+                        ],
+                      )
+                      
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  onPressed: () async => Recolectorcontroler().showbuttonshetOpcionesRecolector(), 
+                  icon: Style.estiloIcon(icon: Icons.more_vert_rounded)
+                )
+                // 📌 Ícono de Estado
+                // Icon(Icons.check, color: Colors.green, size: 20),
+              ],
             ),
-            child: Icon(Icons.car_crash),
           ),
-          title: Style.textTitulo(mensaje: "${rxPersonalLista[index]["vehiculo_nombre"]}, ${rxPersonalLista[index]["vehiculo_anho_modelo"]}"),	
-          subtitle: Style.textSubTitulo(mensaje:"Marca: ${rxPersonalLista[index]["vehiculo_marca"]}, Tipo: ${rxPersonalLista[index]["tipo_vehiculo_nombre"]}"),
+          onTap: () async => await Get.toNamed("/detaellerecolector", arguments: rxPersonalLista[index]),
         );
       }
     );
   }
+
+  // Widget para formatear los textos
+  Widget infoTextRecolector(String label, String value, {bool bold = false}) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(fontSize: 14, color: Theme.of(Get.context!).bottomNavigationBarTheme.unselectedItemColor),
+        children: [
+          TextSpan(
+            text: value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+              color: Theme.of(Get.context!).colorScheme.onBackground
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget infoRowDetalleRecolector(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      // crossAxisAlignment: CrossAxisAlignment.start, // 📌 Asegura alineación correcta
+      children: [
+        Expanded( // 📌 Deja que el label tome el espacio necesario
+          flex: 3,
+          child: Style.textSubTitulo(
+            mensaje: label,
+            // softWrap: true,
+            // textOverflow: TextOverflow.visible, // 📌 Evita que se corten con "..."
+          ),
+        ),
+        const SizedBox(width: 5),
+        Expanded( // 📌 Permite que el valor ocupe el resto del espacio sin cortarse
+          flex: 3,
+          child: Style.textTitulo(
+            mensaje: value,
+            fontSize: 12,
+            // softWrap: true,
+            // textOverflow: TextOverflow.visible, // 📌 Evita que se corten con "..."
+          ),
+        ),
+      ],
+    );
+  }
+
 }

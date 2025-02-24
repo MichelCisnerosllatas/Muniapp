@@ -10,5 +10,7 @@ class Trecolector extends GetxController{
   Rx<RefreshController> refreshControllerRecolector = RefreshController().obs;
   Rx<ScrollController> scrollControllerRecolector = ScrollController().obs;
 
-  
+  RxBool mostrarDetalle = false.obs;
+  RxBool mostrarScroolTOPDetalle = false.obs;
+  RxDouble offsetScrollDetalle = 0.0.obs;
 }

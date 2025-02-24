@@ -134,9 +134,7 @@ class SearchRecolector extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    trecolector.listaRecolectorBusqueda.value = trecolector.listaRecolector.where((element) =>
-        element.entries.any((entry) => entry.value.toString().toLowerCase().contains(query.toLowerCase()))).toList();
-
+    trecolector.listaRecolectorBusqueda.value = trecolector.listaRecolector.where((element) => element.entries.any((entry) => entry.value.toString().toLowerCase().contains(query.toLowerCase()))).toList();
 
     return Obx(() {
       if (trecolector.listaRecolectorBusqueda.isEmpty) {
@@ -154,10 +152,54 @@ class SearchRecolector extends SearchDelegate<String> {
           itemBuilder: (context, index) {
             final item = trecolector.listaRecolectorBusqueda[index];
             return ListTile(
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(item["vehiculo_foto"],
+                  width: 80,
+                  height: 80,
+                  fit: BoxFit.cover,
+                  // 📌 Indicador de carga mientras la imagen se está descargando
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child; // Si ya cargó, muestra la imagen
+
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300], // Color de fondo mientras carga
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.blueAccent,
+                          value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                          : null, // Barra de progreso si se conoce el tamaño
+                        ),
+                      ),
+                    );
+                  },
+
+                  // 📌 En caso de error al cargar la imagen
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(Icons.car_crash, size: 50, color: Colors.grey),
+                    );
+                  },
+                ),
+              ),
               title: Text(item['vehiculo_nombre'] ?? ''),
               subtitle: Text(item['vehiculo_marca'] ?? ''),
-              onTap: () {
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () async {
                 close(context, item["id_vehiculo"].toString());
+                await Get.toNamed("/detaellerecolector", arguments: item);
               },
             );
           },
@@ -181,11 +223,8 @@ class SearchRecolector extends SearchDelegate<String> {
           final suggestion = suggestions[index];
 
           return ListTile(
-            title: Text("${suggestion['vehiculo_nombre']} ${suggestion['vehiculo_anho_modelo']}", 
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-            ),
+            leading: Style.estiloIcon(icon: Icons.alarm),
+            title: Style.textSubTitulo(mensaje: "${suggestion['vehiculo_nombre']} ${suggestion['vehiculo_anho_modelo']}"),
             onTap: () {
               query = suggestion['vehiculo_nombre'] ?? '';
               showResults(context); // Muestra los resultados basados en la selección.

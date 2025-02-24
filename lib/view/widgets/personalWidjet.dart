@@ -148,27 +148,37 @@ class Personalwidjet {
           style: ListTileStyle.list,
           dense: true,
           leading: CircleAvatar(
+            backgroundColor: Theme.of(Get.context!).colorScheme.surface,
             radius: 25,
-            child: Builder(
-              builder: (context) {
-                List<String> palabras = rxPersonalLista[index]['personal_nombre'] == null ? [] : rxPersonalLista[index]['personal_nombre'].split(' ');
-                String iniciales;
-    
-                if (palabras.isEmpty) {
-                  iniciales = 'N';
-                }
-                else if (palabras.length > 1 && palabras[1].isNotEmpty) { 
-                  iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
-                } else {
-                  iniciales = palabras[0].substring(0, 1);
-                }
-    
-                return Style.textTitulo(mensaje: iniciales.toUpperCase().toString());
-              },
+            child: rxPersonalLista[index]['personal_foto'] == null || rxPersonalLista[index]['personal_foto'].isEmpty
+            ? Builder(
+                builder: (context) {
+                  List<String> palabras = rxPersonalLista[index]['personal_foto'].split(' ');
+                  String iniciales;
+
+                  if (palabras.length > 1 && palabras[1].isNotEmpty) { 
+                    iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
+                  } else {
+                    iniciales = palabras[0].substring(0, 1);
+                  }
+
+                  return Style.textTitulo(mensaje: iniciales.toUpperCase());
+                },
+              )
+            : ClipOval(
+              child: Image.network(Webservice().dominio() + rxPersonalLista[index]['personal_foto'],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.person, size: 30, color: Colors.grey); 
+                },
+              ),
             ),
           ),
           title: Style.textTitulo(mensaje: "${rxPersonalLista[index]["personal_nombre"]}, ${rxPersonalLista[index]["personal_apellido_paterno"]} ${rxPersonalLista[index]["personal_apellido_materno"]}"),
           subtitle: Style.textSubTitulo(mensaje: rxPersonalLista[index]["personal_email"] ?? ""),
+          onTap: () async => await Get.toNamed('/detaellepersonal', arguments: rxPersonalLista[index]),
         );
       }
     );

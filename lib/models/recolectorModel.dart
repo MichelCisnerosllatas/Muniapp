@@ -33,7 +33,7 @@ class Recolectormodel extends GetConnect {
       uservidor.validar.value = await uservidor.validarRespuestaServidor(response: uservidor.respuestaservidor);
       if (uservidor.validar.value) {
         uservidor.jsondecode.value = jsonDecode(uservidor.respuestaservidor.body);
-        if (!uservidor.jsondecode.value.containsKey('listar_vehiculos')) {
+        if (!uservidor.jsondecode.value.containsKey('data')) {
           uservidor.mensajesubTituloServidor.value = "El servidor devolvió una respuesta vacía.";
         }
       }
@@ -42,7 +42,7 @@ class Recolectormodel extends GetConnect {
     } finally {
       uservidor.cargaprogreso.value = false;
     }
-    return List<Map<String, dynamic>>.from(uservidor.jsondecode.value['listar_vehiculos'] ?? []) ;
+    return List<Map<String, dynamic>>.from(uservidor.jsondecode.value['data'] ?? []) ;
     // return [];
   }
 }

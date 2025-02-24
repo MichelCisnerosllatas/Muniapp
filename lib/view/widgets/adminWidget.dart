@@ -158,20 +158,32 @@ class Adminwidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: Theme.of(Get.context!).colorScheme.surface,
-                    radius: 25,
-                    child: Builder(
-                      builder: (context) {
-                        List<String> palabras = uusuario.usuariologin['name'] == null ? "N" : uusuario.usuariologin['name'].split(' ');
-                        String iniciales;
-            
-                        if (palabras.length > 1 && palabras[1].isNotEmpty) { 
-                          iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
-                        } else {
-                          iniciales = palabras[0].substring(0, 1);
-                        }
-            
-                        return Style.textTitulo(mensaje: iniciales.toUpperCase().toString());
-                      },
+                    radius: 30,
+                    child: uusuario.usuariologin['profile_picture'] == null || uusuario.usuariologin['profile_picture'].isEmpty
+                    ? Builder(
+                        builder: (context) {
+                          List<String> palabras = uusuario.usuariologin['name'].split(' ');
+                          String iniciales;
+
+                          if (palabras.length > 1 && palabras[1].isNotEmpty) { 
+                            iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
+                          } else {
+                            iniciales = palabras[0].substring(0, 1);
+                          }
+
+                          return Style.textTitulo(mensaje: iniciales.toUpperCase());
+                        },
+                      )
+                    : ClipOval(
+                      child: Image.network(
+                        uusuario.usuariologin['profile_picture'],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.person, size: 30, color: Colors.grey); 
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),

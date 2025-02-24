@@ -24,6 +24,7 @@ class _PrincipalState extends State<Principal> {
 
   void pantallarol() {
     if (uusuario.usuariologin["id_rol"] == null) {
+      Get.offAndToNamed("/login");
       Global().modalErrorShowDialog(context: context, mensaje: "No se ha iniciado sesión.");
       return;
     }
@@ -109,6 +110,13 @@ class _PrincipalState extends State<Principal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Column(
+      //     children: [
+
+      //     ],
+      //   ),
+      // ),
       body: pantallasWidgets.isNotEmpty ? pantallasWidgets[indece] : Center(child: CircularProgressIndicator()),
       bottomNavigationBar: pantallasWidgets.isNotEmpty ? BottomNavigationBar(
         currentIndex: indece,

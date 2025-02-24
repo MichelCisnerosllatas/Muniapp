@@ -1,6 +1,7 @@
 import '../config/library/import.dart';
 
 class Notificacioncontroller extends GetxController {
+  UUsuario uusuario = Get.find<UUsuario>();  
   final FirebaseMessaging messaging = FirebaseMessaging.instance;
   RxString deviceToken = "".obs;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -66,11 +67,15 @@ class Notificacioncontroller extends GetxController {
       mostrarNoticacionLocal(message);
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      if(uusuario.usuariologin["id_rol"] == 3){
+        await Ciudadanocontroller().mostrarRutasInicioCiudadano();
+      }
+      
       print("📬 Usuario tocó la notificación:");
-      print("🔹 Título: ${message.notification?.title}");
-      print("🔹 Cuerpo: ${message.notification?.body}");
-      print("🔹 Datos: ${message.data}");
+      print("🔹 Título message: ${message.notification?.title}");
+      print("🔹 Cuerpo message: ${message.notification?.body}");
+      print("🔹 Datos message: ${message.data}");
     });
   }
 
@@ -86,6 +91,7 @@ class Notificacioncontroller extends GetxController {
       print("🔹 Título: ${initialMessage.notification?.title}");
       print("🔹 Cuerpo: ${initialMessage.notification?.body}");
       print("🔹 Datos: ${initialMessage.data}");
+      
     }
   }
 
@@ -114,7 +120,7 @@ class Notificacioncontroller extends GetxController {
     await flutterLocalNotificationsPlugin.initialize(initSettings);
   }
 
-  void mostrarNoticacionLocal(RemoteMessage message) {
+  void mostrarNoticacionLocal(RemoteMessage message) async {
     var androidDetails = const AndroidNotificationDetails(
       'channel_id', 'channel_name',
       importance: Importance.high, priority: Priority.high,
@@ -122,6 +128,10 @@ class Notificacioncontroller extends GetxController {
 
     var iOSDetails = const DarwinNotificationDetails();
     var generalNotificationDetails = NotificationDetails(android: androidDetails, iOS: iOSDetails);
+
+    if(uusuario.usuariologin["id_rol"] == 3){
+      await Ciudadanocontroller().mostrarRutasInicioCiudadano();
+    }
 
     flutterLocalNotificationsPlugin.show(
       0, // ID de la notificación

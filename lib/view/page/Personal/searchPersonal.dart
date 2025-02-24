@@ -154,10 +154,40 @@ class SearchPersonal extends SearchDelegate<String> {
           itemBuilder: (context, index) {
             final item = tpersona.listaPersonalBusqueda[index];
             return ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Theme.of(Get.context!).colorScheme.surface,
+                radius: 25,
+                child: item['personal_foto'] == null || item['personal_foto'].isEmpty
+                ? Builder(
+                    builder: (context) {
+                      List<String> palabras = item['personal_foto'].split(' ');
+                      String iniciales;
+
+                      if (palabras.length > 1 && palabras[1].isNotEmpty) { 
+                        iniciales = palabras[0].substring(0, 1) + palabras[1].substring(0, 1);
+                      } else {
+                        iniciales = palabras[0].substring(0, 1);
+                      }
+
+                      return Style.textTitulo(mensaje: iniciales.toUpperCase());
+                    },
+                  )
+                : ClipOval(
+                  child: Image.network(Webservice().dominio() + item['personal_foto'],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.person, size: 30, color: Colors.grey); 
+                    },
+                  ),
+                ),
+              ),
               title: Text(item['personal_nombre'] ?? ''),
               subtitle: Text(item['personal_email'] ?? ''),
-              onTap: () {
+              onTap: () async {
                 close(context, item["id_personal"].toString());
+                await Get.toNamed('/detaellepersonal', arguments: item);
               },
             );
           },

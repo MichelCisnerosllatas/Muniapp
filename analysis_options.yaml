@@ -10,6 +10,7 @@
 analyzer:
   errors:
     avoid_print: ignore
+    depend_on_referenced_packages: ignore
     deprecated_member_use: ignore
     file_names: ignore
     prefer_adjacent_string_concatenation: ignore

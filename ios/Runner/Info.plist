@@ -75,6 +75,14 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Muni Pide Permiso a tus archivos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Muni Pide acceso la Camara</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Muni solicita de uso del micrófono en el editor visual</string>
 
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 </dict>
 </plist>
